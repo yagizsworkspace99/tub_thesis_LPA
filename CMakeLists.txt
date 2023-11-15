@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 3.26)
-project(boost)
+project(tempus)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(boost main.cpp)
+
+add_executable(tempus main.cpp
+        include/adj_list.cpp)
+
+include_directories(tempus PUBLIC include)
