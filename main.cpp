@@ -2,20 +2,22 @@
 #include "adj_list.h"
 
 using namespace std;
-const int gSize = 20;
-
+int gSize = 7;
 
 int main() {
-    vector<int> graph[gSize];
+    auto* graph = new vector<int>[gSize];
 
-    vector<int>* g2 = AdjList::addEdge(graph, 3, 6);
-    vector<int>* g3 = AdjList::addEdge(g2, 2, 6);
-    vector<int>* g4 = AdjList::addEdge(g3, 2, 6);
-    vector<int>* g5 = AdjList::addEdge(g4, 1, 6);
-    vector<int>* g6 = AdjList::addEdge(g5, 4, 6);
-    vector<int>* g7 = AdjList::deleteEdge(g6, 3, 6);
+    AdjList::addEdge(graph, 3, 6, gSize);
+    AdjList::addEdge(graph, 2, 6, gSize);
+    AdjList::addEdge(graph, 2, 6, gSize);
+    AdjList::addEdge(graph, 1, 6, gSize);
+    AdjList::addEdge(graph, 4, 6, gSize);
+    AdjList::deleteEdge(graph, 3, 6);
 
-    AdjList::printGraph(g7);
+    vector<int>* newGraph = AdjList::resizeGraph(graph, gSize, 20);
+    AdjList::addEdge(newGraph, 4, 15, 20);
+
+    AdjList::printGraph(newGraph, 20);
 
     return 0;
 }
