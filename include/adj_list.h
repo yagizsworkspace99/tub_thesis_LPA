@@ -15,8 +15,8 @@ public:
     std::vector<int>* graph;
     int size;
 
-    void addEdge(int source, int destination);
     [[nodiscard]] auto findEdge(int source, int destination) const;
+    void addEdge(int source, int destination);
     void deleteEdge(int source, int destination) const;
     void resizeGraph(int newSize);
     void printGraph() const;

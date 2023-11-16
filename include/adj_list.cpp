@@ -1,6 +1,10 @@
 #include "adj_list.h"
 #include <vector>
 
+auto AdjList::findEdge(int source, int destination) const{
+    return find(graph[source].begin(), graph[source].end(), destination);
+}
+
 void AdjList::addEdge(int source, int destination) {
     //can probably change this later to look for the max value in an inserted batch
     // and change the size manually once so this doesn't has to be done constantly
@@ -8,19 +12,19 @@ void AdjList::addEdge(int source, int destination) {
         //might have to be +2?
         resizeGraph(std::max(source, destination) + 1);
     }
-    graph[source].push_back(destination);
-    graph[destination].push_back(source);
-}
-
-auto AdjList::findEdge(int source, int destination) const{
-    return find(graph[source].begin(), graph[source].end(), destination);
+    auto findSource = findEdge(source, destination);
+    auto findDestination = findEdge(destination, source);
+    if (findSource == graph[source].end() || findDestination == graph[destination].end()) {
+        graph[source].push_back(destination);
+        graph[destination].push_back(source);
+    }
 }
 
 void AdjList::deleteEdge(int source, int destination) const {
     auto findSource = findEdge(source, destination);
     auto findDestination = findEdge(destination, source);
 
-    if (findSource != graph[source].end()) {
+    if (findSource != graph[source].end() && findDestination != graph[destination].end()) {
         graph[source].erase(findSource);
         graph[destination].erase(findDestination);
     }
