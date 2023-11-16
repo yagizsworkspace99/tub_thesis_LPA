@@ -2,18 +2,25 @@
 #include <vector>
 #include <algorithm>
 
-using namespace std;
-
 #ifndef TEMPUS_ADJ_LIST_H
 #define TEMPUS_ADJ_LIST_H
 
 class AdjList{
 public:
-    static void addEdge(vector<int>* graph, int source, int destination, int size);
-    static void deleteEdge(vector<int>* graph, int source, int destination);
-    static auto findEdge(vector<int>* graph, int source, int destination);
-    static void printGraph(vector<int>* graph, int size);
-    static vector<int>* resizeGraph(vector<int>* oldGraph, int oldSize, int newSize);
+    explicit AdjList(int size){
+        this->size = size;
+        //might have to be +2?
+        graph = new std::vector<int>[size + 1];
+    }
+    std::vector<int>* graph;
+    int size;
+
+    void addEdge(int source, int destination);
+    [[nodiscard]] auto findEdge(int source, int destination) const;
+    void deleteEdge(int source, int destination) const;
+    void resizeGraph(int newSize);
+    void printGraph() const;
+
 };
 
 #endif //TEMPUS_ADJ_LIST_H

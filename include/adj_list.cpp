@@ -1,22 +1,24 @@
 #include "adj_list.h"
 #include <vector>
 
-using namespace std;
-
-void AdjList::addEdge(vector<int>* graph, int source, int destination, int size) {
-    if (max(source, destination) < size) {
-        graph[source].push_back(destination);
-        graph[destination].push_back(source);
+void AdjList::addEdge(int source, int destination) {
+    //can probably change this later to look for the max value in an inserted batch
+    // and change the size manually once so this doesn't has to be done constantly
+    if (std::max(source, destination) > size) {
+        //might have to be +2?
+        resizeGraph(std::max(source, destination) + 1);
     }
+    graph[source].push_back(destination);
+    graph[destination].push_back(source);
 }
 
-auto AdjList:: findEdge(vector<int>* graph, int source, int destination){
+auto AdjList::findEdge(int source, int destination) const{
     return find(graph[source].begin(), graph[source].end(), destination);
 }
 
-void AdjList::deleteEdge(vector<int>* graph, int source, int destination) {
-    auto findSource = findEdge(graph, source, destination);
-    auto findDestination = findEdge(graph, destination, source);
+void AdjList::deleteEdge(int source, int destination) const {
+    auto findSource = findEdge(source, destination);
+    auto findDestination = findEdge(destination, source);
 
     if (findSource != graph[source].end()) {
         graph[source].erase(findSource);
@@ -24,20 +26,23 @@ void AdjList::deleteEdge(vector<int>* graph, int source, int destination) {
     }
 }
 
-void AdjList::printGraph(vector<int>* graph, int size){
+void AdjList::resizeGraph(int newSize) {
+    auto newGraph = new std::vector<int>[newSize];
+
+    for (int i = 0; i < size; ++i) {
+        newGraph[i] = graph[i];
+    }
+
+    delete[] graph;
+    graph = newGraph;
+
+    size = newSize;
+}
+
+void AdjList::printGraph() const {
     for (int i = 0; i < size; i++) {
-        for (int n: graph[i]) {
+        for (int& n: graph[i]) {
             printf("Edge between: %d and %d\n", i, n);
         }
     }
 }
-
-vector<int> *AdjList::resizeGraph(vector<int> *oldGraph, int oldSize, int newSize) {
-    auto* newGraph = new vector<int>[newSize];
-    for (int i = 0; i < oldSize; ++i) {
-        newGraph[i] = oldGraph[i];
-    }
-    delete[] oldGraph;
-    return newGraph;
-}
-
