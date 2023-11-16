@@ -15,7 +15,6 @@ void AdjList::addEdge(int source, int destination, int time) const {
     }
 }
 
-
 void AdjList::deleteEdge(int source, int destination, int time) const {
     auto findSource = findEdge(source, destination, time);
     auto findDestination = findEdge(destination, source, time);
@@ -53,7 +52,6 @@ void AdjList::addFromFile(const std::string& path) {
         std::string command;
 
         int maxValue = size;
-        //get the max size that the array would have to be changed to, not sure if this is actually more efficient
         while(file >> command >> source >> destination >> time){
             int localMax = std::max(source, destination);
             if(localMax > maxValue) maxValue = localMax;
@@ -70,4 +68,20 @@ void AdjList::addFromFile(const std::string& path) {
             if (command == "delete") deleteEdge(source, destination, time);
         }
     }
+    file.close();
+
+    sortByTime();
 }
+
+//O(N log N)
+void AdjList::sortByTime() const {
+    for (int i = 0; i < size; ++i) {
+        std::sort(graph[i].begin(), graph[i].end(), compareTime);
+    }
+}
+
+bool AdjList::compareTime(std::pair<int, int> i1, std::pair<int, int> i2) {
+    return (i1.second < i2.second);
+}
+
+
