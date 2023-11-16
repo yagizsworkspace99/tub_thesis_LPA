@@ -17,10 +17,11 @@ public:
     int size;
 
     [[nodiscard]] auto findEdge(int source, int destination, int time) const;
-    void addEdge(int source, int destination, int time);
+    void addEdge(int source, int destination, int time) const;
     void deleteEdge(int source, int destination, int time) const;
     void resizeGraph(int newSize);
     void printGraph() const;
+    void addFromFile(const std::string& path);
 
 };
 
