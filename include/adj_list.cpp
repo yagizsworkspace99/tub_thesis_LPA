@@ -50,11 +50,13 @@ void AdjList::addFromFile(const std::string& path) {
     if(file.is_open()){
         int source, destination, time;
         std::string command;
-
+        int noOfAdds = 0;
         int maxValue = size;
+
         while(file >> command >> source >> destination >> time){
             int localMax = std::max(source, destination);
             if(localMax > maxValue) maxValue = localMax;
+            if(command == "add") noOfAdds++;
         }
 
         //might have to be +2
@@ -63,10 +65,20 @@ void AdjList::addFromFile(const std::string& path) {
         file.clear();
         file.seekg(0, std::ifstream::beg);
 
+        int sourceAdds[noOfAdds], destinationAdds[noOfAdds], timeAdds[noOfAdds];
+        int currentLoop = 0;
+
         while(file >> command >> source >> destination >> time){
-            if (command == "add") addEdge(source, destination, time);
-            if (command == "delete") deleteEdge(source, destination, time);
+            if (command == "add"){
+                sourceAdds[currentLoop] = source;
+                destinationAdds[currentLoop] = destination;
+                timeAdds[currentLoop] = time;
+                currentLoop++;
+            }
+            //if (command == "delete") deleteEdge(source, destination, time);
         }
+
+        addBatch(sourceAdds, destinationAdds, timeAdds, noOfAdds);
     }
     file.close();
 
@@ -84,4 +96,8 @@ bool AdjList::compareTime(std::pair<int, int> i1, std::pair<int, int> i2) {
     return (i1.second < i2.second);
 }
 
-
+void AdjList::addBatch(int *source, int *destination, int *time, int numberElements) {
+    for (int i = 0; i < numberElements; ++i) {
+        addEdge(source[i], destination[i], time[i]);
+    }
+}

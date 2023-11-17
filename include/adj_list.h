@@ -27,6 +27,7 @@ private:
     void resizeGraph(int newSize);
     void sortByTime() const;
     static bool compareTime(std::pair<int, int>, std::pair<int, int>);
+    void addBatch(int source[], int destination[], int time[], int numberElements);
 };
 
 #endif //TEMPUS_ADJ_LIST_H
