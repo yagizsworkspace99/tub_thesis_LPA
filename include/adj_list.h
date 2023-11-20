@@ -1,33 +1,32 @@
-#include <iostream>
-#include <vector>
-#include <algorithm>
-
 #ifndef TEMPUS_ADJ_LIST_H
 #define TEMPUS_ADJ_LIST_H
 
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include "libcuckoo/cuckoohash_map.hh"
+
 class AdjList{
 public:
-    explicit AdjList(int size){
-        this->size = size;
-        //might have to be +2?
-        graph = new std::vector<std::pair<int, int>>[size + 1];
-    }
-
     void addFromFile(const std::string& path);
     void printGraph() const;
 
 private:
-    //Array of Vectors containing pairs
-    std::vector<std::pair<int, int>>* graph;
-    int size;
+    int maxEdge;
+    libcuckoo::cuckoohash_map<int, std::vector<std::pair<int, int>>> edges;
 
-    [[nodiscard]] auto findEdge(int source, int destination, int time) const;
-    void addEdge(int source, int destination, int time) const;
+    [[nodiscard]] auto findEdge(std::vector<std::pair<int, int>> edge, int source, int destination, int time) const;
+    void addEdge(int source, int destination, int time);
     void deleteEdge(int source, int destination, int time) const;
     void resizeGraph(int newSize);
-    void sortByTime() const;
+    void sortByTime();
+    void sortByVertex(int sources[], int destinations[], int times[], int numberElements, bool goSources);
     static bool compareTime(std::pair<int, int>, std::pair<int, int>);
-    void addBatch(int source[], int destination[], int time[], int numberElements);
+    void addBatch(int sources[], int destinations[], int times[], int numberElements);
+    void addBatch(int sources, std::vector<std::pair<int, int>>);
+    void addBatchHelper(int sources[], int destinations[], int times[], int numberElements, bool goLeft);
+    void sortBatch(int sources[], int destinations[], int times[], int numberElements);
+    static bool countDistinctValues(libcuckoo::cuckoohash_map<int, int>, int numberElements);
 };
 
 #endif //TEMPUS_ADJ_LIST_H

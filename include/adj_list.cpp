@@ -2,19 +2,38 @@
 #include <vector>
 #include <fstream>
 
-auto AdjList::findEdge(int source, int destination, int time) const{
-    return find(graph[source].begin(), graph[source].end(), std::make_pair(destination, time));
+typedef std::vector<std::pair<int, int>> Edge;
+
+
+void AdjList::addEdge(int source, int destination, int time) {
+
+    //filters out duplicates
+    bool flag;
+    edges.find_fn(source,
+                  [&destination, &time, &flag](Edge &e){flag = (find(e.begin(), e.end(), std::make_pair(destination, time)) != e.end());});
+
+    if (flag) return;
+
+    Edge eSource;
+    eSource.emplace_back(destination, time);
+
+    //insert edge from source
+    edges.upsert(source,
+                 [&destination, &time](Edge &e){e.emplace_back(destination, time);},
+                 eSource);
+
+
+    Edge eDestination;
+    eDestination.emplace_back(source, time);
+
+    //add edge from destination
+    edges.upsert(destination,
+                 [&source, &time](Edge &e){e.emplace_back(source, time);},
+                 eDestination);
 }
 
-void AdjList::addEdge(int source, int destination, int time) const {
-    auto findSource = findEdge(source, destination, time);
-    auto findDestination = findEdge(destination, source, time);
-    if (findSource == graph[source].end() || findDestination == graph[destination].end()) {
-        graph[source].emplace_back(destination, time);
-        graph[destination].emplace_back(source, time);
-    }
-}
-
+//not updated yet
+/*
 void AdjList::deleteEdge(int source, int destination, int time) const {
     auto findSource = findEdge(source, destination, time);
     auto findDestination = findEdge(destination, source, time);
@@ -24,23 +43,17 @@ void AdjList::deleteEdge(int source, int destination, int time) const {
         graph[destination].erase(findDestination);
     }
 }
-
-void AdjList::resizeGraph(int newSize) {
-    auto newGraph = new std::vector<std::pair<int, int>>[newSize];
-
-    for (int i = 0; i < size; ++i) {
-        newGraph[i] = graph[i];
-    }
-
-    delete[] graph;
-    graph = newGraph;
-    size = newSize;
-}
+*/
 
 void AdjList::printGraph() const {
-    for (int i = 0; i < size; i++) {
-        for (auto& n: graph[i]) {
-            printf("Edge between: %d and %d at time %d\n", i, n.first, n.second);
+    for (int i = 0; i < maxEdge + 1; i++) {
+        Edge out;
+        if (edges.find(i, out)){
+            std::cout << "Edge " << i << " contains " << out.size() << " edges." << std::endl;
+            for (auto& n: out) {
+                printf("    - between: %d and %d at time %d\n", i, n.first, n.second);
+            }
+            std::cout << std::endl;
         }
     }
 }
@@ -51,16 +64,22 @@ void AdjList::addFromFile(const std::string& path) {
         int source, destination, time;
         std::string command;
         int noOfAdds = 0;
-        int maxValue = size;
+        libcuckoo::cuckoohash_map<int, int> leftTable;
+        libcuckoo::cuckoohash_map<int, int> rightTable;
 
         while(file >> command >> source >> destination >> time){
             int localMax = std::max(source, destination);
-            if(localMax > maxValue) maxValue = localMax;
-            if(command == "add") noOfAdds++;
+            if(localMax > maxEdge) maxEdge = localMax;
+            if(command == "add"){
+                leftTable.insert(source, destination);
+                rightTable.insert(destination, source);
+                addEdge(source, destination, time);
+                noOfAdds++;
+            }
         }
 
-        //might have to be +2
-        if(maxValue > size) resizeGraph(maxValue + 1);
+        bool flag = (leftTable.size()<rightTable.size());
+
 
         file.clear();
         file.seekg(0, std::ifstream::beg);
@@ -75,20 +94,30 @@ void AdjList::addFromFile(const std::string& path) {
                 timeAdds[currentLoop] = time;
                 currentLoop++;
             }
+
             //if (command == "delete") deleteEdge(source, destination, time);
         }
 
-        addBatch(sourceAdds, destinationAdds, timeAdds, noOfAdds);
+        //countDistinctValues(sourceAdds, destinationAdds, noOfAdds);
+
+        //addBatch(sourceAdds, destinationAdds, timeAdds, noOfAdds);
+        //addBatchHelper(sourceAdds, destinationAdds, timeAdds, noOfAdds, true);
+
     }
     file.close();
 
     sortByTime();
 }
 
-//O(N log N)
-void AdjList::sortByTime() const {
-    for (int i = 0; i < size; ++i) {
-        std::sort(graph[i].begin(), graph[i].end(), compareTime);
+
+void AdjList::sortByTime() {
+    for (int i = 0; i < maxEdge; ++i) {
+        Edge out;
+
+        if(edges.contains(i)){
+            edges.update_fn(i,
+                         [](Edge &e){ std::sort(e.begin(), e.end(), compareTime);});
+        }
     }
 }
 
@@ -101,3 +130,45 @@ void AdjList::addBatch(int *source, int *destination, int *time, int numberEleme
         addEdge(source[i], destination[i], time[i]);
     }
 }
+
+//ignore
+void AdjList::addBatchHelper(int *sources, int *destinations, int *times, int numberElements, bool goLeft) {
+    int last = -1;
+    std::vector<std::pair<int, int>> cur;
+    for (int i = 0; i < numberElements; ++i) {
+        if (sources[i] != last){
+            addBatch(sources[i], cur);
+            cur.empty();
+        }
+        cur.emplace_back(destinations[i], times[i]);
+        last = sources[i];
+    }
+}
+
+void AdjList::addBatch(int sources, std::vector<std::pair<int, int>> v) {
+    for (auto n: v) {
+        addEdge(sources, n.first, n.second);
+    }
+}
+/*
+void AdjList::sortBatch(int *sources, int *destinations, int *times, int numberElements) {
+    bool goSource = countDistinctValues(sources, destinations, numberElements);
+
+}
+
+bool AdjList::countDistinctValues(libcuckoo::cuckoohash_map<int, int> table, int numberElements) {
+    table.
+    for (int i = 0; i < table.size(); ++i) {
+
+    }
+    printf(" sources: %zu, destinations: %zu\n", sourcesMap.size(), destinationMap.size());
+    return sourcesMap.size()<destinationMap.size();
+}
+
+void AdjList::sortByVertex(int *sources, int *destinations, int *times, int numberElements, bool goSources) {
+    std::vector<std::pair<int, int>> temp[10];
+    
+}
+
+
+*/
