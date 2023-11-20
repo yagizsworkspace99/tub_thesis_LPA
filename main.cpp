@@ -1,8 +1,9 @@
 #include "adj_list.h"
+#include "libcuckoo/cuckoohash_map.hh"
 
 int main() {
 
-    AdjList list(1);
+    AdjList list;
 
     std::string filePath = "../testinput";
     list.addFromFile(filePath);
