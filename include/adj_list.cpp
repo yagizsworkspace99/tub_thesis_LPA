@@ -78,13 +78,22 @@ void AdjList::addFromFile(const std::string& path) {
             }
         }
 
+        //Compare number of unique sources and destinations, then accordingly set sortFlag for sortBatch method
         bool flag = (leftTable.size()<rightTable.size());
+        int sortFlag;
 
+        if (flag) {
+            // If the condition is true, set sortFlag to 0 --> grouping occurs using source vertices
+            sortFlag = 0;
+        } else {
+            // If the condition is false, set sortFlag to 1 --> grouping occurs using destinations vertices
+            sortFlag = 1;
+        }
 
         file.clear();
         file.seekg(0, std::ifstream::beg);
 
-        int sourceAdds[noOfAdds], destinationAdds[noOfAdds], timeAdds[noOfAdds];
+        std::vector<int> sourceAdds(noOfAdds), destinationAdds(noOfAdds), timeAdds(noOfAdds);
         int currentLoop = 0;
 
         while(file >> command >> source >> destination >> time){
@@ -98,8 +107,24 @@ void AdjList::addFromFile(const std::string& path) {
             //if (command == "delete") deleteEdge(source, destination, time);
         }
 
-        //countDistinctValues(sourceAdds, destinationAdds, noOfAdds);
+        //Create new hash map, keys are source vertices and values are vectors of integer pairs (destination, time). This is then filled by sortBatch function.
+        libcuckoo::cuckoohash_map<int, std::vector<std::pair<int, int>>> groupedData;
 
+        sortBatch(sortFlag, sourceAdds, destinationAdds, timeAdds, groupedData);
+
+        // Iterate through the groupedData and add edges to AL --> How does one iterate through the hash map???
+        for (auto it = groupedData.begin(); it != groupedData.end(); ++it) {
+            int source = it->first;
+            const auto& edges = it->second;
+
+            // Iterate over each pair in edges
+            for (const auto& edge : edges) {
+                // Add edge to the adjacency list
+                addEdge(source, edge.first, edge.second);
+            }
+        }
+
+        //countDistinctValues(sourceAdds, destinationAdds, noOfAdds);
         //addBatch(sourceAdds, destinationAdds, timeAdds, noOfAdds);
         //addBatchHelper(sourceAdds, destinationAdds, timeAdds, noOfAdds, true);
 
@@ -125,11 +150,13 @@ bool AdjList::compareTime(std::pair<int, int> i1, std::pair<int, int> i2) {
     return (i1.second < i2.second);
 }
 
+/*
 void AdjList::addBatch(int *source, int *destination, int *time, int numberElements) {
     for (int i = 0; i < numberElements; ++i) {
         addEdge(source[i], destination[i], time[i]);
     }
 }
+*/
 
 //ignore
 void AdjList::addBatchHelper(int *sources, int *destinations, int *times, int numberElements, bool goLeft) {
@@ -150,6 +177,42 @@ void AdjList::addBatch(int sources, std::vector<std::pair<int, int>> v) {
         addEdge(sources, n.first, n.second);
     }
 }
+
+void AdjList::sortBatch(int sortFlag, const std::vector<int>& sourceAdds, const std::vector<int>& destinationAdds, const std::vector<int>& timeAdds, libcuckoo::cuckoohash_map<int, std::vector<std::pair<int, int>>>& groupedData) {
+
+    // Determine which vector to use based on the sort flag
+    const std::vector<int>& relevantVector = (sortFlag == 0) ? sourceAdds : destinationAdds;
+
+    // Determine the number of iterations based on the relevant vector
+    size_t numIterations = relevantVector.size();
+
+    // Group edges by source vertex using hash map
+    for (size_t i = 0; i < numIterations; ++i) {
+        int vertex = relevantVector[i];
+        int destination = (sortFlag == 0) ? destinationAdds[i] : sourceAdds[i];
+        int time = timeAdds[i];
+
+        // If source is not present in groupedData, it is automatically inserted
+        groupedData[vertex].emplace_back(destination, time);
+    }
+
+    // Prints out hash map
+    processGroupedData(groupedData);
+
+}
+
+void AdjList::processGroupedData(int source, const std::vector<std::pair<int, int>>& edges) {
+    // Example: Print the grouped data
+    std::cout << "Source " << source << " has " << edges.size() << " edges:" << std::endl;
+    for (const auto& edge : edges) {
+        std::cout << "    - to " << edge.first << " at time " << edge.second << std::endl;
+    }
+    std::cout << std::endl;
+}
+
+
+
+
 /*
 void AdjList::sortBatch(int *sources, int *destinations, int *times, int numberElements) {
     bool goSource = countDistinctValues(sources, destinations, numberElements);

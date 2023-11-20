@@ -22,10 +22,10 @@ private:
     void sortByTime();
     void sortByVertex(int sources[], int destinations[], int times[], int numberElements, bool goSources);
     static bool compareTime(std::pair<int, int>, std::pair<int, int>);
-    void addBatch(int sources[], int destinations[], int times[], int numberElements);
     void addBatch(int sources, std::vector<std::pair<int, int>>);
     void addBatchHelper(int sources[], int destinations[], int times[], int numberElements, bool goLeft);
-    void sortBatch(int sources[], int destinations[], int times[], int numberElements);
+    static void sortBatch(int sortFlag, const std::vector<int>& sourceAdds, const std::vector<int>& destinationAdds, const std::vector<int>& timeAdds, libcuckoo::cuckoohash_map<int, std::vector<std::pair<int, int>>>& groupedData);
+    static void processGroupedData(int source, const std::vector<std::pair<int, int>>& edges);
     static bool countDistinctValues(libcuckoo::cuckoohash_map<int, int>, int numberElements);
 };
 
