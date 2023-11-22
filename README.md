@@ -110,9 +110,9 @@ The `sortBatch` method is designed to efficiently group a batch of edges based o
 
 This method creates a hash map (`groupedData`) where keys are source vertices, and values are vectors of pairs representing destination vertices and corresponding timestamps. It iterates through the input vectors, and for each edge, it inserts the data into the hash map under the appropriate source vertex.
 
-### 'processGroupedData`
+### 'printGroupedData`
 
-The `processGroupedData` method is designed to handle and perform operations on grouped data before adding it to the adjacency list. In this instance it involves printing the grouped data for a specific source vertex. It takes two parameters:
+It involves printing the grouped data for a specific source vertex. It takes two parameters:
 
 - `source`: The source vertex for which the data is grouped.
 - `edges`: A vector of pairs representing destination vertices and corresponding timestamps for the given source.
