@@ -1,3 +1,4 @@
+
 #ifndef TEMPUS_ADJ_LIST_H
 #define TEMPUS_ADJ_LIST_H
 
@@ -10,6 +11,7 @@ class AdjList{
 public:
     void addFromFile(const std::string& path);
     void printGraph() const;
+    void rangeQuery(int start, int end, int (*func)(int,int,int)) ;
 
 private:
     int maxEdge;

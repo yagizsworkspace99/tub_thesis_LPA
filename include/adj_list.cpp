@@ -1,3 +1,4 @@
+
 #include "adj_list.h"
 #include <vector>
 #include <fstream>
@@ -241,3 +242,11 @@ void AdjList::sortByVertex(int *sources, int *destinations, int *times, int numb
 
 
 */
+
+void AdjList::rangeQuery(int start, int end, int (*func)(int,int,int)){
+    for (int i = start; i <= end; i++){
+        for(const auto& edge : graph[i]){
+            func(i,edge.first,edge.second);
+        }
+    }
+}
