@@ -1,7 +1,10 @@
 #include "adj_list.h"
+#include "ParallelTools/parallel.h"
+
 #include <fstream>
 #include <cinttypes>
 #include <unordered_set>
+#include <map>
 
 typedef libcuckoo::cuckoohash_map<uint64_t, std::vector<uint64_t>> Edge;
 
@@ -79,6 +82,7 @@ void AdjList::addFromFile(const std::string& path) {
         int noOfAdds = 0;
         std::unordered_set<uint64_t> distinctSources;
         std::unordered_set<uint64_t> distinctDestination;
+        //maybe more efficient to go through the file twice?
         std::vector<uint64_t> sourceAdds(noOfAdds), destinationAdds(noOfAdds), timeAdds(noOfAdds);
 
 
@@ -101,7 +105,7 @@ void AdjList::addFromFile(const std::string& path) {
 
 
         //Create new hash map, keys are source vertices and values are vectors of integer pairs (destination, time).
-        // This is then filled by sortBatch function.
+        //This is then filled by sortBatch function.
         libcuckoo::cuckoohash_map<uint64_t, Edge> groupedData;
 
         sortBatch(flag, sourceAdds, destinationAdds, timeAdds, groupedData);
@@ -110,23 +114,20 @@ void AdjList::addFromFile(const std::string& path) {
 
     }
     file.close();
-
-    //sortByTime();
 }
 
 void AdjList::addBatchCuckoo(libcuckoo::cuckoohash_map<uint64_t, Edge>& groupedData) {
     auto lt = groupedData.lock_table();
 
-    for (const auto& innerTbl : lt) {
-        Edge edgeData = innerTbl.second;
-        auto lt2 = edgeData.lock_table();
+    ParallelTools::parallel_for_each(lt, [&](auto i, auto innerTbl ){
+        auto lt2 = innerTbl.lock_table();
 
         for (const auto& vector : lt2) {
             for (auto &edge: vector.second) {
-                addEdge(vector.first, edge, innerTbl.first);
+                addEdge(vector.first, edge, i);
             }
         }
-    }
+    });
 }
 
 
@@ -182,7 +183,6 @@ void AdjList::addBatch(int *source, int *destination, int *time, int numberEleme
 
 //TODO: update rangeQuery
 /*
-
 void AdjList::rangeQuery(uint64_t start, uint64_t end, int (*func)(uint64_t,uint64_t,uint64_t)){
     for (uint64_t i = start; i <= end; i++){
         Edge out;
@@ -193,7 +193,7 @@ void AdjList::rangeQuery(uint64_t start, uint64_t end, int (*func)(uint64_t,uint
         }
     }
 }
-
+/*
 //No longer needed
 void AdjList::sortByTime() {
     for (int i = 0; i < maxEdge; ++i) {
