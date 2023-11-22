@@ -97,7 +97,17 @@ bool AdjList::compareTime(std::pair<int, int> i1, std::pair<int, int> i2) {
 }
 
 void AdjList::addBatch(int *source, int *destination, int *time, int numberElements) {
+
     for (int i = 0; i < numberElements; ++i) {
         addEdge(source[i], destination[i], time[i]);
+    }
+}
+
+
+void AdjList::rangeQuery(int start, int end, int (*func)(int,int,int)){
+    for (int i = start; i <= end; i++){
+        for(const auto& edge : graph[i]){
+            func(i,edge.first,edge.second);
+        }
     }
 }
