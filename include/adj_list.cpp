@@ -1,8 +1,10 @@
 #include "adj_list.h"
 #include <vector>
 #include <fstream>
+#include "libcuckoo/cuckoohash_map.hh"
 
 typedef std::vector<std::pair<int, int>> Edge;
+libcuckoo::cuckoohash_map<int, std::vector<std::pair<int, int>>> AdjList::edges;
 
 
 void AdjList::addEdge(int source, int destination, int time) {
@@ -112,17 +114,7 @@ void AdjList::addFromFile(const std::string& path) {
 
         sortBatch(sortFlag, sourceAdds, destinationAdds, timeAdds, groupedData);
 
-        // Iterate through the groupedData and add edges to AL --> How does one iterate through the hash map???
-        for (auto it = groupedData.begin(); it != groupedData.end(); ++it) {
-            int source = it->first;
-            const auto& edges = it->second;
-
-            // Iterate over each pair in edges
-            for (const auto& edge : edges) {
-                // Add edge to the adjacency list
-                addEdge(source, edge.first, edge.second);
-            }
-        }
+        addBatchCuckoo(groupedData);
 
         //countDistinctValues(sourceAdds, destinationAdds, noOfAdds);
         //addBatch(sourceAdds, destinationAdds, timeAdds, noOfAdds);
@@ -134,47 +126,19 @@ void AdjList::addFromFile(const std::string& path) {
     sortByTime();
 }
 
+void AdjList::addBatchCuckoo(libcuckoo::cuckoohash_map<int, std::vector<std::pair<int, int>>>& groupedData) {
+    auto lt = groupedData.lock_table();
 
-void AdjList::sortByTime() {
-    for (int i = 0; i < maxEdge; ++i) {
-        Edge out;
+    for (const auto& item : lt) {
+        int sourceNode = item.first;
+        const std::vector<std::pair<int, int>>& edgeData = item.second;
 
-        if(edges.contains(i)){
-            edges.update_fn(i,
-                         [](Edge &e){ std::sort(e.begin(), e.end(), compareTime);});
+        // Iterate through edgeData and add edges to the adjacency list
+        for (const auto& edge : edgeData) {
+            int destination = edge.first;
+            int time = edge.second;
+            addEdge(sourceNode, destination, time);
         }
-    }
-}
-
-bool AdjList::compareTime(std::pair<int, int> i1, std::pair<int, int> i2) {
-    return (i1.second < i2.second);
-}
-
-/*
-void AdjList::addBatch(int *source, int *destination, int *time, int numberElements) {
-    for (int i = 0; i < numberElements; ++i) {
-        addEdge(source[i], destination[i], time[i]);
-    }
-}
-*/
-
-//ignore
-void AdjList::addBatchHelper(int *sources, int *destinations, int *times, int numberElements, bool goLeft) {
-    int last = -1;
-    std::vector<std::pair<int, int>> cur;
-    for (int i = 0; i < numberElements; ++i) {
-        if (sources[i] != last){
-            addBatch(sources[i], cur);
-            cur.empty();
-        }
-        cur.emplace_back(destinations[i], times[i]);
-        last = sources[i];
-    }
-}
-
-void AdjList::addBatch(int sources, std::vector<std::pair<int, int>> v) {
-    for (auto n: v) {
-        addEdge(sources, n.first, n.second);
     }
 }
 
@@ -192,26 +156,68 @@ void AdjList::sortBatch(int sortFlag, const std::vector<int>& sourceAdds, const 
         int destination = (sortFlag == 0) ? destinationAdds[i] : sourceAdds[i];
         int time = timeAdds[i];
 
-        // If source is not present in groupedData, it is automatically inserted
-        groupedData[vertex].emplace_back(destination, time);
+        // If source is not present in groupedData, it is automatically inserted --> Maybe upsert or insert_or_assign
+        //groupedData[vertex].emplace_back(destination, time);
+
+        // Upsert: Insert the edge into the vector associated with the source vertex
+        groupedData.upsert(vertex, [&](std::vector<std::pair<int, int>>& v) {
+            v.emplace_back(destination, time);
+        }, std::vector<std::pair<int, int>>(1, std::make_pair(destination, time)));
+
     }
-
-    // Prints out hash map
-    processGroupedData(groupedData);
-
+    printGroupedData(groupedData);
 }
 
-void AdjList::processGroupedData(int source, const std::vector<std::pair<int, int>>& edges) {
-    // Example: Print the grouped data
-    std::cout << "Source " << source << " has " << edges.size() << " edges:" << std::endl;
-    for (const auto& edge : edges) {
-        std::cout << "    - to " << edge.first << " at time " << edge.second << std::endl;
+void AdjList::printGroupedData(libcuckoo::cuckoohash_map<int, std::vector<std::pair<int, int>>>& groupedData) {
+    for (auto & it : groupedData.lock_table()) {
+        int source = it.first;
+        const std::vector<std::pair<int, int>>& DestTime = it.second;
+
+        // Print the source and its associated edges
+        std::cout << "Source " << source << " has " << DestTime.size() << " edges:" << std::endl;
+        for (const auto& edge : DestTime) {
+            std::cout << "    - to " << edge.first << " at time " << edge.second << std::endl;
+        }
+        std::cout << std::endl;
     }
-    std::cout << std::endl;
+}
+
+void AdjList::sortByTime() {
+    for (int i = 0; i < maxEdge; ++i) {
+        Edge out;
+
+        if(edges.contains(i)){
+            edges.update_fn(i,
+                            [](Edge &e){ std::sort(e.begin(), e.end(), compareTime);});
+        }
+    }
+}
+
+bool AdjList::compareTime(std::pair<int, int> i1, std::pair<int, int> i2) {
+    return (i1.second < i2.second);
+}
+
+void AdjList::addBatch(int *source, int *destination, int *time, int numberElements) {
+    for (int i = 0; i < numberElements; ++i) {
+        addEdge(source[i], destination[i], time[i]);
+    }
 }
 
 
-
+/*
+void AdjList::addBatchHelper(int *sources, int *destinations, int *times, int numberElements, bool goLeft) {
+    int last = -1;
+    std::vector<std::pair<int, int>> cur;
+    for (int i = 0; i < numberElements; ++i) {
+        if (sources[i] != last){
+            addBatch(sources[i], cur);
+            cur.empty();
+        }
+        cur.emplace_back(destinations[i], times[i]);
+        last = sources[i];
+    }
+}
+*/
 
 /*
 void AdjList::sortBatch(int *sources, int *destinations, int *times, int numberElements) {
