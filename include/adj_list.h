@@ -6,6 +6,7 @@
 #define TEMPUS_ADJ_LIST_H
 
 class AdjList{
+
 public:
     explicit AdjList(int size){
         this->size = size;
@@ -13,6 +14,7 @@ public:
         graph = new std::vector<std::pair<int, int>>[size + 1];
     }
 
+    void rangeQuery(int start, int end, int (*func)(int,int,int)) ;
     void addFromFile(const std::string& path);
     void printGraph() const;
 
@@ -28,6 +30,8 @@ private:
     void sortByTime() const;
     static bool compareTime(std::pair<int, int>, std::pair<int, int>);
     void addBatch(int source[], int destination[], int time[], int numberElements);
+
+
 };
 
 #endif //TEMPUS_ADJ_LIST_H
