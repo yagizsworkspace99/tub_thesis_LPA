@@ -7,5 +7,11 @@ set(CMAKE_CXX_STANDARD 17)
 add_executable(tempus main.cpp
         include/adj_list.cpp)
 
-include_directories(tempus PUBLIC include include/libcuckoo include/ParallelTools)
-add_subdirectory(include/libcuckoo/libcuckoo include/ParallelTools/ParallelTools)
+include_directories(tempus PUBLIC
+        include
+        include/libcuckoo
+)
+
+add_subdirectory(
+        include/libcuckoo/libcuckoo
+)
