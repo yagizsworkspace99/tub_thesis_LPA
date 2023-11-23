@@ -7,35 +7,30 @@
 The `AdjList` class has the following members:
 
 - **Public Member Functions:**
-  - **Constructor (`explicit AdjList(int size)'):**
-    - Constructs an instance of `AdjList` with a specified size.
-    - Initializes the adjacency list (`graph`) as an array of vectors of pairs.
-
-- **Public Member Functions:**
   - `addFromFile(const std::string& path)`: Reads commands and edge information from a file and updates the graph accordingly.
   - `printGraph() const`: Prints the edges of the graph to the console.
 
 - **Private Member Variables:**
-  - `graph`: An array of vectors of pairs representing the adjacency list.
-  - `size`: An integer representing the size of the graph.
+  - `edges`: Cuckoo hashmap with keys as uint64_t and value as another cuckoo hashmap. This one contains uint64_t as keys and a vector as values. The vector contains uint64_t.
+            The first uint64_t corresponds to the temporal data of the edge, the second one corresponds the source of the edge, the last corresponds to the destination of the edge.
+            Undirected graphs will have two entries with their source and destination swapped for the second one
 
 - **Private Member Functions:**
-  - `findEdge(int source, int destination, int time) const`: Searches for an edge in the adjacency list.
-  - `addEdge(int source, int destination, int time) const`: Adds an undirected edge to the graph.
+  - `addSingleEdge(uint64_t source, uint64_t destination, uint64_t time, libcuckoo::cuckoohash_map<uint64_t,libcuckoo::cuckoohash_map<uint64_t, std::vector<uint64_t>>> &map)`: Inserts a single edge into the map.
+  - `addEdge(uint64_t source, uint64_t destination, uint64_t time)`: Adds an undirected edge to the graph. Also checks that no duplicates are inserted.
   - `deleteEdge(int source, int destination, int time) const`: Deletes an undirected edge from the graph.
-  - `resizeGraph(int newSize)`: Resizes the graph to accommodate a larger number of vertices.
-  - `sortByTime() const`: Sorts the edges of each vertex in the graph based on the time attribute.
-  - `static bool compareTime(std::pair<int, int>, std::pair<int, int>)`: A static function used as a custom comparison function for sorting edges based on their time attribute.
+  - `addBatchCuckoo(libcuckoo::cuckoohash_map<uint64_t, libcuckoo::cuckoohash_map<uint64_t, std::vector<uint64_t>>>& groupedData)`: Adds a batch of edges into the map.
+  - `sortBatch(bool sortBySource, const std::vector<uint64_t>& sourceAdds, const std::vector<uint64_t>& destinationAdds, const std::vector<uint64_t>& timeAdds, libcuckoo::cuckoohash_map<uint64_t,libcuckoo::cuckoohash_map<uint64_t, std::vector<uint64_t>>>& groupedData)`: Sorts the input data to be used with addBatchCuckoo.
+  - `printGroupedData(libcuckoo::cuckoohash_map<uint64_t,libcuckoo::cuckoohash_map<uint64_t, std::vector<uint64_t>>>& groupedData)`: Testfunction to inspect the sorted data.
 
 
 ## adj_list.cpp
 
-### `findEdge`
+### `addSingleEdge`
 
-This function searches for an edge in the adjacency list.
+This function inserts a single edge into the given map.
 
-- Parameters: `source`, `destination`, and `time`.
-- Returns an iterator to the found edge or the end iterator if not found.
+- Parameters: `source`, `destination`, `time` and `map`.
 
 ### `addEdge`
 
@@ -50,13 +45,6 @@ This function deletes an undirected edge from the graph.
 
 - Parameters: `source`, `destination`, and `time`.
 - Checks if the edge exists before deletion.
-
-### `resizeGraph`
-
-This function resizes the graph to accommodate a larger number of vertices.
-
-- Parameter: `newSize`.
-- Allocates a new array of vectors and copies the existing data.
 
 ### `printGraph`
 
@@ -74,7 +62,7 @@ The `addFromFile` method reads edge data from a specified file and populates the
 
 2. **Sorting and Grouping:**
    - Compares the number of unique source and destination vertices.
-   - Determines the `sortFlag` based on the comparison result.
+   - Determines the `sortBySource` based on the comparison result.
    - Creates vectors (`sourceAdds`, `destinationAdds`, `timeAdds`) to store edge data.
 
 3. **Grouping with `sortBatch`:**
@@ -88,21 +76,11 @@ The `addFromFile` method reads edge data from a specified file and populates the
 5. **Sorting:**
    - After processing the file, the adjacency list is sorted based on time using the `sortByTime` method.
 
-### `sortByTime`
-
-This function sorts the edges of each vertex in the graph based on the time attribute.
-
-- It uses `std::sort` and a custom comparison function (`compareTime`).
-
-### `compareTime`
-
-A static function used as a custom comparison function for sorting edges based on their time attribute.
-
 ## `sortBatch`
 
 The `sortBatch` method is designed to efficiently group a batch of edges based on a specified sorting criterion (source or destination vertices). It takes the following parameters:
 
-- `sortFlag`: A flag indicating whether to group by source vertices (0) or destination vertices (1).
+- `sortBySource`: A flag indicating whether to group by source vertices (true) or destination vertices (false).
 - `sourceAdds`: A vector containing source vertices of the edges.
 - `destinationAdds`: A vector containing destination vertices of the edges.
 - `timeAdds`: A vector containing timestamps of the edges.
