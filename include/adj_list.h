@@ -15,6 +15,9 @@ private:
     //time < source < list of destinations>>
     libcuckoo::cuckoohash_map<uint64_t, libcuckoo::cuckoohash_map<uint64_t, std::vector<uint64_t>>> edges;
 
+    //TODO: std::unorderedmap<uint64_t, libcuckoo::cuckoohash_map<uint64_t, std::vector<uint64_t>>>
+    //TODO: std::map<uint64_t, libcuckoo::cuckoohash_map<uint64_t, std::vector<uint64_t>>>
+
     void addEdge(uint64_t source, uint64_t destination, uint64_t time);
     static void addSingleEdge(uint64_t source, uint64_t destination, uint64_t time,
                        libcuckoo::cuckoohash_map<uint64_t,libcuckoo::cuckoohash_map<uint64_t, std::vector<uint64_t>>> &map);
