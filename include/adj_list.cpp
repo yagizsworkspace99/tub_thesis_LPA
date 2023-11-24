@@ -1,4 +1,5 @@
 #include "adj_list.h"
+#include "parlay/parallel.h"
 
 #include <fstream>
 #include <cinttypes>
@@ -131,6 +132,25 @@ void AdjList::addBatchCuckoo(libcuckoo::cuckoohash_map<uint64_t, Edge>& groupedD
     auto ms_int = std::chrono::duration_cast<std::chrono::milliseconds>(t2-t1);
     std::cout << ms_int.count() <<"ms\n";
 }
+
+/*
+ * Parallel implementation using ParallelTools
+ * Has massive memory issues
+void AdjList::addBatchCuckoo(libcuckoo::cuckoohash_map<uint64_t, Edge>& groupedData) {
+    auto lt = groupedData.lock_table();
+
+    ParallelTools::parallel_for_each(lt, [&](auto i, auto innerTbl ){
+        auto lt2 = innerTbl.lock_table();
+        //printf("%" PRIu64"\n", i);
+
+        for (const auto& vector : lt2) {
+            for (auto &edge: vector.second) {
+                addEdge(vector.first, edge, i);
+            }
+        }
+    });
+}
+*/
 
 void AdjList::sortBatch(bool sortBySource, const std::vector<uint64_t>& sourceAdds, const std::vector<uint64_t>& destinationAdds,
                         const std::vector<uint64_t>& timeAdds, libcuckoo::cuckoohash_map<uint64_t, Edge>& groupedData) {
