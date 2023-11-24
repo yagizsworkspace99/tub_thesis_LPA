@@ -9,18 +9,15 @@
 typedef libcuckoo::cuckoohash_map<uint64_t, std::vector<uint64_t>> Edge;
 
 void AdjList::addSingleEdge(uint64_t source, uint64_t destination, uint64_t time, libcuckoo::cuckoohash_map<uint64_t, Edge> &map) {
-    Edge eSource;
-    std::vector<uint64_t> tempVectorS;
-    tempVectorS.push_back(destination);
-    eSource.insert(source, tempVectorS);
-
-    // Upsert: Insert the edge into the vector associated with the source vertex
-    map.upsert(time,
-                 [&source, &tempVectorS, &destination](Edge &e)
-                 {e.upsert(source,
-                           [&destination](std::vector<uint64_t> &d){d.push_back(destination);},
-                           tempVectorS);},
-                 eSource);
+    if (map.contains(time)){
+        map.update_fn(time,
+                      [&source, &destination](Edge &e)
+                      {e.upsert(source,
+                                [&destination](std::vector<uint64_t> &d){d.push_back(destination);},
+                                    std::vector<uint64_t>{destination});});
+    } else{
+        map.insert(time, Edge().insert(source, std::vector<uint64_t>{destination}));
+    }
 }
 
 void AdjList::addEdge(uint64_t source, uint64_t destination, uint64_t time) {
