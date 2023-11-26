@@ -6,6 +6,7 @@
 
 typedef libcuckoo::cuckoohash_map<uint64_t, std::vector<uint64_t>> Edge;
 
+
 void AdjList::addSingleEdge(uint64_t source, uint64_t destination, uint64_t time, libcuckoo::cuckoohash_map<uint64_t, Edge> &map) {
     if (map.contains(time)){
         map.update_fn(time,
@@ -51,6 +52,40 @@ void AdjList::deleteEdge(int source, int destination, int time) const {
     }
 }
 */
+
+//if destinations are empty remove whole edge ? with e.erase ?
+void AdjList::deleteSingleEdge(uint64_t source, uint64_t destination, uint64_t time,libcuckoo::cuckoohash_map<uint64_t, Edge> &map) {
+
+    if(map.contains(time)){
+        map.update_fn(time,[&source,&destination](Edge e){
+            e.erase_fn(source,[&destination](std::vector<uint64_t>&d){
+                d.erase(std::find(d.begin(),d.end(),destination));
+                    return true;
+            });
+        });
+
+    };
+}
+
+void AdjList::deleteEdge(uint64_t source, uint64_t destination, uint64_t time) {
+
+    //check if edge to be deleted exists
+    bool flag;
+
+    edges.find_fn(time,
+                  [&destination, &flag, &source](Edge &e)
+                  {e.find_fn(source,
+                             [&flag, &destination](std::vector<uint64_t> &d)
+                             {flag = (std::find(d.begin(), d.end(), destination) != d.end());});});
+
+    if (flag) return;
+
+    //delete edges from source
+    deleteSingleEdge(source, destination, time, edges);
+    //delete edges from destination
+    deleteSingleEdge(destination, source, time, edges);
+
+}
 
 void AdjList::printGraph()  {
     std::cout << "Printing all edges:" <<std::endl << std::endl;
