@@ -56,29 +56,32 @@ void AdjList::deleteEdge(int source, int destination, int time) const {
 //if destinations are empty remove whole edge ? with e.erase ?
 void AdjList::deleteSingleEdge(uint64_t source, uint64_t destination, uint64_t time,libcuckoo::cuckoohash_map<uint64_t, Edge> &map) {
 
+
     if(map.contains(time)){
         map.update_fn(time,[&source,&destination](Edge e){
-            e.erase_fn(source,[&destination](std::vector<uint64_t>&d){
-                d.erase(std::find(d.begin(),d.end(),destination));
-                    return true;
+            e.erase_fn(source,[&source,&destination,&e](std::vector<uint64_t>&d){
+                d.erase(std::find(d.begin(), d.end(), destination));
+                if(d.empty()){
+                         //e.erase(source);
+                }
+                return true;
             });
         });
-
     };
 }
 
 void AdjList::deleteEdge(uint64_t source, uint64_t destination, uint64_t time) {
 
     //check if edge to be deleted exists
-    bool flag;
-
-    edges.find_fn(time,
-                  [&destination, &flag, &source](Edge &e)
-                  {e.find_fn(source,
-                             [&flag, &destination](std::vector<uint64_t> &d)
-                             {flag = (std::find(d.begin(), d.end(), destination) != d.end());});});
-
-    if (flag) return;
+//    bool flag;
+//
+//    edges.find_fn(time,
+//                [&destination, &flag, &source](Edge &e)
+//              {e.find_fn(source,
+//                       [&flag, &destination](std::vector<uint64_t> &d)
+//                     {flag = (std::find(d.begin(), d.end(), destination) != d.end());});});
+//
+//    if (!flag) return;
 
     //delete edges from source
     deleteSingleEdge(source, destination, time, edges);
@@ -117,6 +120,7 @@ void AdjList::addFromFile(const std::string& path) {
         uint64_t maxTime = 0;
         //maybe more efficient to go through the file twice?
         std::vector<uint64_t> sourceAdds{}, destinationAdds{}, timeAdds{};
+        std::vector<uint64_t> sourceDels{}, destinationDels{}, timeDels{};
 
         while(file >> command >> source >> destination >> time){
             if(command == "add"){
@@ -124,18 +128,25 @@ void AdjList::addFromFile(const std::string& path) {
                 sourceAdds.push_back(source);
                 destinationAdds.push_back(destination);
                 timeAdds.push_back(time);
-
+            }
+            if(command == "delete"){
+                sourceDels.push_back(source);
+                destinationDels.push_back(destination);
+                timeDels.push_back(time);
             }
         }
         file.close();
 
         //Create new hash map, keys are source vertices and values are vectors of integer pairs (destination, time).
         //This is then filled by sortBatch function.
-        libcuckoo::cuckoohash_map<uint64_t, Edge> groupedData;
+        libcuckoo::cuckoohash_map<uint64_t, Edge> groupedDataAdds;
+        libcuckoo::cuckoohash_map<uint64_t, Edge> groupedDataDels;
 
-        sortBatch(sourceAdds, destinationAdds, timeAdds, groupedData);
+        sortBatch(sourceAdds, destinationAdds, timeAdds, groupedDataAdds);
+        batchOperationCuckoo(true,groupedDataAdds);
 
-        addBatchCuckoo(groupedData);
+        sortBatch(sourceDels,destinationDels,timeDels, groupedDataDels);
+        batchOperationCuckoo(false,groupedDataDels);
         //addBatchCuckooParlay(groupedData, maxTime);
     }
 
@@ -145,7 +156,7 @@ void AdjList::addFromFile(const std::string& path) {
     }
 }
 
-void AdjList::addBatchCuckoo(libcuckoo::cuckoohash_map<uint64_t, Edge>& groupedData) {
+void AdjList::batchOperationCuckoo(bool flag,libcuckoo::cuckoohash_map<uint64_t, Edge>& groupedData) {
     auto t1 = std::chrono::high_resolution_clock::now();
     auto lt = groupedData.lock_table();
 
@@ -155,13 +166,14 @@ void AdjList::addBatchCuckoo(libcuckoo::cuckoohash_map<uint64_t, Edge>& groupedD
 
         for (const auto &vector: lt2) {
             for (auto &edge: vector.second) {
-                addEdge(vector.first, edge, innerTbl.first);
+                if(flag) addEdge(vector.first, edge, innerTbl.first);
+                else deleteEdge(vector.first,edge,innerTbl.first);
             }
         }
     }
     auto t2 = std::chrono::high_resolution_clock::now();
     auto ms_int = std::chrono::duration_cast<std::chrono::milliseconds>(t2-t1);
-    std::cout << "addBatchCuckoo has taken " << ms_int.count() <<"ms\n";
+    std::cout << "batchOperationCuckoo has taken " << ms_int.count() <<"ms\n";
 }
 
 //doesn't terminate properly
