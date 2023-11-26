@@ -10,10 +10,12 @@ add_executable(tempus main.cpp
 include_directories(tempus PUBLIC
         include
         include/libcuckoo
+        include/parlaylib/
         include/parlaylib/include/
+        include/parlaylib/include/parlay
 )
 
 add_subdirectory(
-        include/libcuckoo/libcuckoo
-        include/parlaylib/include/parlay
+        include/libcuckoo/
+        include/parlaylib/
 )

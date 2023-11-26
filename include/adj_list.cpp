@@ -3,9 +3,6 @@
 
 #include <fstream>
 #include <cinttypes>
-#include <unordered_set>
-#include <map>
-#include <sstream>
 
 typedef libcuckoo::cuckoohash_map<uint64_t, std::vector<uint64_t>> Edge;
 
@@ -17,7 +14,9 @@ void AdjList::addSingleEdge(uint64_t source, uint64_t destination, uint64_t time
                                 [&destination](std::vector<uint64_t> &d){d.push_back(destination);},
                                     std::vector<uint64_t>{destination});});
     } else{
-        map.insert(time, Edge().insert(source, std::vector<uint64_t>{destination}));
+        Edge e;
+        e.insert(source, std::vector<uint64_t>{destination});
+        map.insert(time, e);
     }
 }
 
@@ -29,7 +28,7 @@ void AdjList::addEdge(uint64_t source, uint64_t destination, uint64_t time) {
                   [&destination, &flag, &source](Edge &e)
                   {e.find_fn(source,
                              [&flag, &destination](std::vector<uint64_t> &d)
-                             {flag = (find(d.begin(), d.end(), destination) != d.end());});});
+                             {flag = (std::find(d.begin(), d.end(), destination) != d.end());});});
 
     if (flag) return;
 
@@ -55,21 +54,24 @@ void AdjList::deleteEdge(int source, int destination, int time) const {
 
 void AdjList::printGraph()  {
     std::cout << "Printing all edges:" <<std::endl << std::endl;
+    uint64_t count = 0;
 
     auto lt = edges.lock_table();
 
     for (const auto& innerTbl : lt) {
         Edge edgeData = innerTbl.second;
         auto lt2 = edgeData.lock_table();
-        printf("Time %" PRIu64 " contains %" PRIu64 " edges\n", innerTbl.first, innerTbl.second.size());
+        printf("Time %" PRIu64 " contains edges\n", innerTbl.first);
 
         for (const auto& vector : lt2) {
             for (auto &edge: vector.second) {
                 printf("    - between: %" PRIu64 " and %" PRIu64 " at time %" PRIu64 "\n", vector.first, edge, innerTbl.first);
+                count++;
             }
         }
         std::cout << std::endl;
     }
+    std::cout << "Total number of edges: " << count << std::endl;
 }
 
 void AdjList::addFromFile(const std::string& path) {
@@ -77,48 +79,37 @@ void AdjList::addFromFile(const std::string& path) {
     if(file.is_open()){
         uint64_t source, destination, time;
         std::string command;
-        int noOfAdds = 0;
-        std::unordered_set<uint64_t> distinctSources;
-        std::unordered_set<uint64_t> distinctDestination;
+        uint64_t maxTime = 0;
         //maybe more efficient to go through the file twice?
-        std::vector<uint64_t> sourceAdds(noOfAdds), destinationAdds(noOfAdds), timeAdds(noOfAdds);
+        std::vector<uint64_t> sourceAdds{}, destinationAdds{}, timeAdds{};
 
         while(file >> command >> source >> destination >> time){
             if(command == "add"){
+                if (time > maxTime) maxTime = time;
                 sourceAdds.push_back(source);
                 destinationAdds.push_back(destination);
                 timeAdds.push_back(time);
 
-                distinctSources.insert(source);
-                distinctDestination.insert(destination);
-                noOfAdds++;
             }
         }
         file.close();
-
-        //Compare number of unique sources and destinations, then accordingly set sortFlag for sortBatch method
-        //true -> grouping occurs using source vertices
-        //false -> grouping occurs using destinations vertices
-        bool flag = distinctSources.size() < distinctDestination.size();
-
 
         //Create new hash map, keys are source vertices and values are vectors of integer pairs (destination, time).
         //This is then filled by sortBatch function.
         libcuckoo::cuckoohash_map<uint64_t, Edge> groupedData;
 
-        sortBatch(flag, sourceAdds, destinationAdds, timeAdds, groupedData);
+        sortBatch(sourceAdds, destinationAdds, timeAdds, groupedData);
 
         addBatchCuckoo(groupedData);
+        //addBatchCuckooParlay(groupedData, maxTime);
     }
 }
 
 void AdjList::addBatchCuckoo(libcuckoo::cuckoohash_map<uint64_t, Edge>& groupedData) {
+    auto t1 = std::chrono::high_resolution_clock::now();
     auto lt = groupedData.lock_table();
 
-    auto t1 = std::chrono::high_resolution_clock::now();
-
     for (const auto &innerTbl: lt) {
-
         Edge edgeData = innerTbl.second;
         auto lt2 = edgeData.lock_table();
 
@@ -130,56 +121,50 @@ void AdjList::addBatchCuckoo(libcuckoo::cuckoohash_map<uint64_t, Edge>& groupedD
     }
     auto t2 = std::chrono::high_resolution_clock::now();
     auto ms_int = std::chrono::duration_cast<std::chrono::milliseconds>(t2-t1);
-    std::cout << ms_int.count() <<"ms\n";
+    std::cout << "addBatchCuckoo has taken " << ms_int.count() <<"ms\n";
 }
 
-/*
- * Parallel implementation using ParallelTools
- * Has massive memory issues
-void AdjList::addBatchCuckoo(libcuckoo::cuckoohash_map<uint64_t, Edge>& groupedData) {
+//doesn't terminate properly
+//terrible with large gaps between timestamps
+void AdjList::addBatchCuckooParlay(libcuckoo::cuckoohash_map<uint64_t, Edge>& groupedData, uint64_t maxTime) {
+    auto t1 = std::chrono::high_resolution_clock::now();
     auto lt = groupedData.lock_table();
 
-    ParallelTools::parallel_for_each(lt, [&](auto i, auto innerTbl ){
-        auto lt2 = innerTbl.lock_table();
-        //printf("%" PRIu64"\n", i);
+    parlay::parallel_for(lt.begin()->first, maxTime + 1, [&](uint64_t i){
+        if (!lt.find(i)->second.empty()){
+            Edge innerTbl = lt.find(i)->second;
+            auto lt2 = innerTbl.lock_table();
 
-        for (const auto& vector : lt2) {
-            for (auto &edge: vector.second) {
-                addEdge(vector.first, edge, i);
+            for (const auto& vector : lt2) {
+                for (auto &edge: vector.second) {
+                    addEdge(vector.first, edge, i);
+                }
             }
         }
     });
+    auto t2 = std::chrono::high_resolution_clock::now();
+    auto ms_int = std::chrono::duration_cast<std::chrono::milliseconds>(t2-t1);
+    std::cout << "addBatchCuckooParlay has taken " << ms_int.count() <<"ms\n";
 }
-*/
 
-void AdjList::sortBatch(bool sortBySource, const std::vector<uint64_t>& sourceAdds, const std::vector<uint64_t>& destinationAdds,
+void AdjList::sortBatch(const std::vector<uint64_t>& sourceAdds, const std::vector<uint64_t>& destinationAdds,
                         const std::vector<uint64_t>& timeAdds, libcuckoo::cuckoohash_map<uint64_t, Edge>& groupedData) {
-
-    // Determine which vector to use based on the sort flag
-    const std::vector<uint64_t>& relevantVector = sortBySource ? sourceAdds : destinationAdds;
-    const std::vector<uint64_t>& irrelevantVector = sortBySource ? destinationAdds : sourceAdds;
-
-    // Determine the number of iterations based on the relevant vector
-    size_t numIterations = relevantVector.size();
-    //printf("size is: %" PRIu64 "\n", numIterations);
-
     auto t1 = std::chrono::high_resolution_clock::now();
-    // Group edges by source vertex using hash map
+
+    // Determine the number of iterations
+    size_t numIterations = timeAdds.size();
+
+    // Group edges by time using hash map
     for (size_t i = 0; i < numIterations; ++i) {
-        //if (i % 10000 == 0) std::cout << "currently at " << i << std::endl;
-
-        uint64_t source = relevantVector[i];
-        uint64_t destination = irrelevantVector[i];
+        uint64_t source = sourceAdds[i];
+        uint64_t destination = destinationAdds[i];
         uint64_t time = timeAdds[i];
-
-        //If source is not present in groupedData, it is automatically inserted --> Maybe upsert or insert_or_assign
-        //groupedData[vertex].emplace_back(destination, time);
 
         addSingleEdge(source, destination, time, groupedData);
     }
     auto t2 = std::chrono::high_resolution_clock::now();
     auto ms_int = std::chrono::duration_cast<std::chrono::milliseconds>(t2-t1);
-    std::cout << ms_int.count() <<"ms\n";
+    std::cout << "sortBatch has taken " << ms_int.count() <<"ms\n";
 
     //printGroupedData(groupedData);
 }
