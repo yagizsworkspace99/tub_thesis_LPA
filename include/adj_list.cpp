@@ -103,6 +103,11 @@ void AdjList::addFromFile(const std::string& path) {
         addBatchCuckoo(groupedData);
         //addBatchCuckooParlay(groupedData, maxTime);
     }
+
+    if (!file.is_open()) {
+        std::cerr << "Error: Could not open the file." << std::endl;
+        return;
+    }
 }
 
 void AdjList::addBatchCuckoo(libcuckoo::cuckoohash_map<uint64_t, Edge>& groupedData) {
@@ -207,6 +212,8 @@ void AdjList::rangeQuery(uint64_t start, uint64_t end, int (*func)(uint64_t,uint
         }
     }
 }
+*/
+
 /*
 //No longer needed
 void AdjList::sortByTime() {
