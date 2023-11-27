@@ -40,34 +40,20 @@ void AdjList::addEdge(uint64_t source, uint64_t destination, uint64_t time) {
 
 }
 
-//not updated yet
-/*
-void AdjList::deleteEdge(int source, int destination, int time) const {
-    auto findSource = findEdge(source, destination, time);
-    auto findDestination = findEdge(destination, source, time);
-
-    if (findSource != graph[source].end() && findDestination != graph[destination].end()) {
-        graph[source].erase(findSource);
-        graph[destination].erase(findDestination);
-    }
-}
-*/
-
 //if destinations are empty remove whole edge ? with e.erase ?
 void AdjList::deleteSingleEdge(uint64_t source, uint64_t destination, uint64_t time,libcuckoo::cuckoohash_map<uint64_t, Edge> &map) {
 
-
-    if(map.contains(time)){
-        map.update_fn(time,[&source,&destination](Edge e){
-            e.erase_fn(source,[&source,&destination,&e](std::vector<uint64_t>&d){
+       if(map.contains(time)){
+        map.update_fn(time,[&source,&destination](Edge &e){
+            e.erase_fn(source,[&destination](std::vector<uint64_t>&d){
                 d.erase(std::find(d.begin(), d.end(), destination));
-                if(d.empty()){
+                //if(d.empty()){
                          //e.erase(source);
-                }
+                //}
                 return true;
             });
         });
-    };
+    }
 }
 
 void AdjList::deleteEdge(uint64_t source, uint64_t destination, uint64_t time) {
