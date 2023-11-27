@@ -47,13 +47,28 @@ void AdjList::addEdge(uint64_t source, uint64_t destination, uint64_t time) {
 
 void AdjList::deleteSingleEdge(uint64_t source, uint64_t destination, uint64_t time,
                                libcuckoo::cuckoohash_map<uint64_t, Edge> &map) {
+    bool isDestinationEmpty = false;
+    bool isEdgeEmpty = false;
 
     if (map.contains(time)) {
-        map.update_fn(time, [&source, &destination](Edge &e) {
-            e.update_fn(source, [&destination](std::vector<uint64_t> &d) {
-             return d.erase(std::find(d.begin(), d.end(), destination)) <= d.end();
+
+        map.update_fn(time, [&isDestinationEmpty,&source, &destination](Edge &e) {
+            e.update_fn(source, [&isDestinationEmpty,&destination](std::vector<uint64_t> &d) {
+                 d.erase(std::find(d.begin(), d.end(), destination));
+                 if(d.empty()) isDestinationEmpty = true;
             });
         });
+        //delete source node if it has no edges (destinations)
+        if(isDestinationEmpty) {
+            map.find_fn(time, [&isEdgeEmpty,&source](Edge &e) {
+                e.erase(source);
+                if(e.empty()) isEdgeEmpty = true;
+            });
+        }
+        //delete timestamp if edges is empty
+        if(isEdgeEmpty){
+            map.erase(time);
+        }
     }
 }
 
