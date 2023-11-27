@@ -151,7 +151,12 @@ void AdjList::addFromFile(const std::string &path) {
         sortBatch(sourceDels, destinationDels, timeDels, groupedDataDels);
         batchOperationCuckoo(false, groupedDataDels);
         //addBatchCuckooParlay(groupedData, maxTime);
-        rangeQuery();
+
+        uint64_t timee,src,dest;
+
+        rangeQuery(10,30,[](uint64_t a, uint64_t b, uint64_t c){
+            printf("    - RangeQueryTest between: %" PRIu64 " and %" PRIu64 " at time %" PRIu64 "\n", b, c,a);
+        });
     }
 
     if (!file.is_open()) {
@@ -251,16 +256,8 @@ void AdjList::addBatch(int *source, int *destination, int *time, int numberEleme
     }
 }
 
+void AdjList::rangeQuery(uint64_t start, uint64_t end, void (*func)(uint64_t,uint64_t,uint64_t)) {
 
-//TODO: update rangeQuery
-//rangequery on timestamps that returns edges
-//rangequery on edges that retunes sourcenodes
-//timetsmap range -> return timestamp values in that range
-
-void AdjList::rangeQuery() {
-
-    uint64_t start = 0;
-    uint64_t end= 25;
     auto lt = edges.lock_table();
 
     for (auto it = lt.begin(); it != lt.end(); it++) {
@@ -271,27 +268,13 @@ void AdjList::rangeQuery() {
 
             for(const auto &vector: lt2 ){
                 for(auto &edge: vector.second){
-                    //func(key,vector.first,edge);
-                    printf("    - between: %" PRIu64 " and %" PRIu64 " at time %" PRIu64 "\n", vector.first, edge,
-                           key);
+                    func(key,vector.first,edge);
                 }
-
             }
-
-
         }
     }
-
-
-
 }
 
-
-//for (auto it = lt.begin(); it != lt.end(); it++) {
-//const auto& [key, value] = *it;
-//// or
-//const auto& key = it->first;
-//const auto& value = it->second;
 /*
 //No longer needed
 void AdjList::sortByTime() {

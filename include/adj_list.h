@@ -31,8 +31,6 @@ private:
     //void rangeQuery(uint64_t start, uint64_t end, void (*func)(libcuckoo::cuckoohash_map<uint64_t, libcuckoo::cuckoohash_map<uint64_t, std::vector<uint64_t>>>&map,
       //      libcuckoo::cuckoohash_map<uint64_t, std::vector<uint64_t>>&edge));
     void rangeQuery(uint64_t start, uint64_t end, void (*func)(uint64_t,uint64_t,uint64_t));
-    void rangeQuery(uint64_t start, uint64_t end, void (*func)(uint64_t,uint64_t));
-    void rangeQuery();
 };
 
 #endif //TEMPUS_ADJ_LIST_H
