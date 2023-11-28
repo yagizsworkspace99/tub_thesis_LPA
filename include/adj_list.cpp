@@ -280,10 +280,10 @@ void AdjList::rangeQuery(uint64_t start, uint64_t end, void (*func)(uint64_t, ui
 void AdjList::memoryConsumption(libcuckoo::cuckoohash_map<uint64_t, libcuckoo::cuckoohash_map<uint64_t, std::vector<uint64_t>>> &map) {
 
     auto lt = map.lock_table();
-    int64_t memory=0;
+    uint64_t memory=0;
 
     for(auto &it:lt){
-        int64_t key = it.first;
+        uint64_t key = it.first;
         Edge edgeData = it.second;
         auto lt2 = edgeData.lock_table();
 
