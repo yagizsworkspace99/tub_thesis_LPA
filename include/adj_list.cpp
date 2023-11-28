@@ -152,7 +152,7 @@ void AdjList::addFromFile(const std::string &path) {
         batchOperationCuckoo(false, groupedDataDels);
         //addBatchCuckooParlay(groupedData, maxTime);
 
-        rangeQuery(10, 30, [](uint64_t a, uint64_t b, uint64_t c) {
+        rangeQuery(0, 10, [](uint64_t a, uint64_t b, uint64_t c) {
             printf("    - RangeQueryTest between: %" PRIu64 " and %" PRIu64 " at time %" PRIu64 "\n", b, c, a);
         });
     }
@@ -260,10 +260,11 @@ void AdjList::rangeQuery(uint64_t start, uint64_t end, void (*func)(uint64_t, ui
 
     auto lt = edges.lock_table();
 
-    for (auto & it : lt) {
-        if (it.first <= end && it.first >= start) {
-            const auto &[key, value] = it;
-            Edge edgeData = value;
+    while(start <=end){
+        auto it = lt.find(start);
+        if(it!=lt.end()){
+            uint64_t key = it->first;
+            Edge edgeData = it->second;
             auto lt2 = edgeData.lock_table();
 
             for (const auto &vector: lt2) {
@@ -271,7 +272,8 @@ void AdjList::rangeQuery(uint64_t start, uint64_t end, void (*func)(uint64_t, ui
                     func(key, vector.first, edge);
                 }
             }
-        }
+            start++;
+        }else start++;
     }
 }
 
