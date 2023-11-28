@@ -52,21 +52,21 @@ void AdjList::deleteSingleEdge(uint64_t source, uint64_t destination, uint64_t t
 
     if (map.contains(time)) {
 
-        map.update_fn(time, [&isDestinationEmpty,&source, &destination](Edge &e) {
-            e.update_fn(source, [&isDestinationEmpty,&destination](std::vector<uint64_t> &d) {
-                 d.erase(std::find(d.begin(), d.end(), destination));
-                 if(d.empty()) isDestinationEmpty = true;
+        map.update_fn(time, [&isDestinationEmpty, &source, &destination](Edge &e) {
+            e.update_fn(source, [&isDestinationEmpty, &destination](std::vector<uint64_t> &d) {
+                d.erase(std::find(d.begin(), d.end(), destination));
+                if (d.empty()) isDestinationEmpty = true;
             });
         });
         //delete source node if it has no edges (destinations)
-        if(isDestinationEmpty) {
-            map.find_fn(time, [&isEdgeEmpty,&source](Edge &e) {
+        if (isDestinationEmpty) {
+            map.find_fn(time, [&isEdgeEmpty, &source](Edge &e) {
                 e.erase(source);
-                if(e.empty()) isEdgeEmpty = true;
+                if (e.empty()) isEdgeEmpty = true;
             });
         }
         //delete timestamp if edges is empty
-        if(isEdgeEmpty){
+        if (isEdgeEmpty) {
             map.erase(time);
         }
     }
@@ -152,8 +152,8 @@ void AdjList::addFromFile(const std::string &path) {
         batchOperationCuckoo(false, groupedDataDels);
         //addBatchCuckooParlay(groupedData, maxTime);
 
-        rangeQuery(10,30,[](uint64_t a, uint64_t b, uint64_t c){
-            printf("    - RangeQueryTest between: %" PRIu64 " and %" PRIu64 " at time %" PRIu64 "\n", b, c,a);
+        rangeQuery(10, 30, [](uint64_t a, uint64_t b, uint64_t c) {
+            printf("    - RangeQueryTest between: %" PRIu64 " and %" PRIu64 " at time %" PRIu64 "\n", b, c, a);
         });
     }
 
@@ -185,7 +185,8 @@ void AdjList::batchOperationCuckoo(bool flag, libcuckoo::cuckoohash_map<uint64_t
 
 //doesn't terminate properly
 //terrible with large gaps between timestamps
-void AdjList::batchOperationCuckooParlay(bool flag, libcuckoo::cuckoohash_map<uint64_t, Edge> &groupedData, uint64_t maxTime) {
+void AdjList::batchOperationCuckooParlay(bool flag, libcuckoo::cuckoohash_map<uint64_t, Edge> &groupedData,
+                                         uint64_t maxTime) {
     auto t1 = std::chrono::high_resolution_clock::now();
     auto lt = groupedData.lock_table();
 
@@ -196,8 +197,8 @@ void AdjList::batchOperationCuckooParlay(bool flag, libcuckoo::cuckoohash_map<ui
 
             for (const auto &vector: lt2) {
                 for (auto &edge: vector.second) {
-                   if(flag) addEdge(vector.first, edge, i);
-                   else deleteEdge(vector.first,edge,i);
+                    if (flag) addEdge(vector.first, edge, i);
+                    else deleteEdge(vector.first, edge, i);
                 }
             }
         }
@@ -255,19 +256,19 @@ void AdjList::addBatch(int *source, int *destination, int *time, int numberEleme
     }
 }
 
-void AdjList::rangeQuery(uint64_t start, uint64_t end, void (*func)(uint64_t,uint64_t,uint64_t)) {
+void AdjList::rangeQuery(uint64_t start, uint64_t end, void (*func)(uint64_t, uint64_t, uint64_t)) {
 
     auto lt = edges.lock_table();
 
-    for (auto it = lt.begin(); it != lt.end(); it++) {
-        if(it->first <= end && it->first >= start) {
-            const auto &[key, value] = *it;
+    for (auto & it : lt) {
+        if (it.first <= end && it.first >= start) {
+            const auto &[key, value] = it;
             Edge edgeData = value;
-            auto lt2= edgeData.lock_table();
+            auto lt2 = edgeData.lock_table();
 
-            for(const auto &vector: lt2 ){
-                for(auto &edge: vector.second){
-                    func(key,vector.first,edge);
+            for (const auto &vector: lt2) {
+                for (auto &edge: vector.second) {
+                    func(key, vector.first, edge);
                 }
             }
         }
