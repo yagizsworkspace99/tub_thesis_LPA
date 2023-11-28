@@ -152,8 +152,6 @@ void AdjList::addFromFile(const std::string &path) {
         batchOperationCuckoo(false, groupedDataDels);
         //addBatchCuckooParlay(groupedData, maxTime);
 
-        uint64_t timee,src,dest;
-
         rangeQuery(10,30,[](uint64_t a, uint64_t b, uint64_t c){
             printf("    - RangeQueryTest between: %" PRIu64 " and %" PRIu64 " at time %" PRIu64 "\n", b, c,a);
         });
@@ -187,7 +185,7 @@ void AdjList::batchOperationCuckoo(bool flag, libcuckoo::cuckoohash_map<uint64_t
 
 //doesn't terminate properly
 //terrible with large gaps between timestamps
-void AdjList::addBatchCuckooParlay(libcuckoo::cuckoohash_map<uint64_t, Edge> &groupedData, uint64_t maxTime) {
+void AdjList::batchOperationCuckooParlay(bool flag, libcuckoo::cuckoohash_map<uint64_t, Edge> &groupedData, uint64_t maxTime) {
     auto t1 = std::chrono::high_resolution_clock::now();
     auto lt = groupedData.lock_table();
 
@@ -198,7 +196,8 @@ void AdjList::addBatchCuckooParlay(libcuckoo::cuckoohash_map<uint64_t, Edge> &gr
 
             for (const auto &vector: lt2) {
                 for (auto &edge: vector.second) {
-                    addEdge(vector.first, edge, i);
+                   if(flag) addEdge(vector.first, edge, i);
+                   else deleteEdge(vector.first,edge,i);
                 }
             }
         }
