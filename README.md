@@ -2,95 +2,103 @@
 
 ## adj_list.h
 
-### Class Definition
+This C++ header file defines a class named `AdjList` representing an adjacency list for a graph. The class uses the `libcuckoo` library for efficient hash map operations.
 
-The `AdjList` class has the following members:
+### Public Methods:
 
-- **Public Member Functions:**
-  - `addFromFile(const std::string& path)`: Reads commands and edge information from a file and updates the graph accordingly.
-  - `printGraph() const`: Prints the edges of the graph to the console.
+1. **addFromFile(const std::string& path):**
+   - Reads graph data from a file specified by the provided path and adds it to the adjacency list.
 
-- **Private Member Variables:**
-  - `edges`: Cuckoo hashmap with keys as uint64_t and value as another cuckoo hashmap. This one contains uint64_t as keys and a vector as values. The vector contains uint64_t.
-            The first uint64_t corresponds to the temporal data of the edge, the second one corresponds the source of the edge, the last corresponds to the destination of the edge.
-            Undirected graphs will have two entries with their source and destination swapped for the second one
+2. **printGraph():**
+   - Prints the contents of the graph, displaying edges and associated timestamps.
 
-- **Private Member Functions:**
-  - `addSingleEdge(uint64_t source, uint64_t destination, uint64_t time, libcuckoo::cuckoohash_map<uint64_t,libcuckoo::cuckoohash_map<uint64_t, std::vector<uint64_t>>> &map)`: Inserts a single edge into the map.
-  - `addEdge(uint64_t source, uint64_t destination, uint64_t time)`: Adds an undirected edge to the graph. Also checks that no duplicates are inserted.
-  - `deleteEdge(int source, int destination, int time) const`: Deletes an undirected edge from the graph.
-  - `addBatchCuckoo(libcuckoo::cuckoohash_map<uint64_t, libcuckoo::cuckoohash_map<uint64_t, std::vector<uint64_t>>>& groupedData)`: Adds a batch of edges into the map.
-  - `sortBatch(bool sortBySource, const std::vector<uint64_t>& sourceAdds, const std::vector<uint64_t>& destinationAdds, const std::vector<uint64_t>& timeAdds, libcuckoo::cuckoohash_map<uint64_t,libcuckoo::cuckoohash_map<uint64_t, std::vector<uint64_t>>>& groupedData)`: Sorts the input data to be used with addBatchCuckoo.
-  - `printGroupedData(libcuckoo::cuckoohash_map<uint64_t,libcuckoo::cuckoohash_map<uint64_t, std::vector<uint64_t>>>& groupedData)`: Testfunction to inspect the sorted data.
+### Private Members:
+
+- **edges:**
+  - A cuckoo hash map storing graph data where:
+    - Key: Timestamp
+    - Value: Another cuckoo hash map where:
+      - Key: Source vertex
+      - Value: Vector of destination vertices.
+
+### Private Methods:
+
+1. **addEdge(uint64_t source, uint64_t destination, uint64_t time):**
+   - Adds a single edge to the adjacency list.
+
+2. **deleteEdge(uint64_t source, uint64_t destination, uint64_t time):**
+   - Deletes a single edge from the adjacency list.
+
+3. **batchOperationCuckoo(bool flag, ...):**
+   - Performs batch operations (addition or deletion) on the graph using cuckoo hash map.
+
+4. **batchOperationCuckooParlay(bool flag, ...):**
+   - Similar to `batchOperationCuckoo` with an additional parameter for handling parlay operations.
+
+5. **sortBatch(const std::vector<uint64_t>& sourceAdds, ...):**
+   - Sorts a batch of data before performing batch operations.
+
+6. **printGroupedData(...):**
+   - Prints the grouped data within the cuckoo hash map.
+
+7. **addBatch(int *source, int *destination, int *time, int numberElements):**
+   - Adds a batch of edges to the graph.
+
+8. **rangeQuery(uint64_t start, uint64_t end, void (*func)(uint64_t,uint64_t,uint64_t)):**
+   - Performs a range query on the graph data within the specified timestamp range.
+
+9. **memoryConsumption(...):**
+   - Calculates and prints the memory consumption of the cuckoo hash map.
 
 
 ## adj_list.cpp
 
-### `addSingleEdge`
+### Additions:
 
-This function inserts a single edge into the given map.
+#### `addSingleEdge(uint64_t source, uint64_t destination, uint64_t time, libcuckoo::cuckoohash_map<uint64_t, Edge> &map):`
+   - Adds a single edge to the specified cuckoo hash map (`map`) at the given timestamp (`time`).
+   - Checks if the timestamp exists in the map. If it does, the source and destination are added to the corresponding vectors. If not, a new entry is created. This function is a helper used internally within the class.
 
-- Parameters: `source`, `destination`, `time` and `map`.
+#### `addEdge(uint64_t source, uint64_t destination, uint64_t time):`
+   - Adds an edge to the adjacency list of the graph, checking for duplicate edges before insertion.
+   - Checks if the specified edge (defined by source, destination, and timestamp) already exists in the graph. If it does, the edge is not added to avoid duplicates. Calls `addSingleEdge` twice to add the edge from both the source and destination perspectives.
 
-### `addEdge`
+### Deletions:
 
-This function adds an undirected edge to the graph.
+#### `deleteSingleEdge(uint64_t source, uint64_t destination, uint64_t time, libcuckoo::cuckoohash_map<uint64_t, Edge> &map):`
+   - Deletes a single edge from the specified cuckoo hash map (`map`) at the given timestamp (`time`).
+   - Checks if the timestamp exists in the map. If it does, removes the destination from the vector associated with the source. If the vector becomes empty, checks if the source node has no more edges and removes it as well. If the timestamp becomes empty, it is also removed from the map.
 
-- Parameters: `source`, `destination`, and `time`.
-- Checks if the edge already exists before adding it.
+#### `deleteEdge(uint64_t source, uint64_t destination, uint64_t time):`
+   - Deletes an edge from the graph, checking for the existence of the specified edge before deletion.
+   - Checks if the specified edge exists in the graph. If it does, calls `deleteSingleEdge` twice to delete the edge from both the source and destination perspectives.
 
-### `deleteEdge`
 
-This function deletes an undirected edge from the graph.
+#### `printGraph():`
+This function prints all edges in the graph along with their timestamps. It uses a lock table to iterate over the cuckoo hash map and its inner tables to display the graph's structure.
 
-- Parameters: `source`, `destination`, and `time`.
-- Checks if the edge exists before deletion.
+#### `addFromFile(const std::string &path):`
+Reads graph data from a file specified by the provided path and performs batch operations on the graph. It parses the file content to identify "add" and "delete" commands, collects data into vectors, sorts and groups the data, and then applies batch operations on the graph using cuckoo hash maps.
 
-### `printGraph`
+#### `batchOperationCuckoo(bool flag, libcuckoo::cuckoohash_map<uint64_t, Edge> &groupedData):`
+Performs batch operations (addition or deletion) on the graph using cuckoo hash maps. It locks the cuckoo hash map's table, iterates over the data, and adds or deletes edges based on the specified flag. It also measures the execution time and prints the duration.
 
-This function prints the edges of the graph to the console.
+#### `batchOperationCuckooParlay(bool flag, libcuckoo::cuckoohash_map<uint64_t, Edge> &groupedData, uint64_t maxTime):`
+Parallelized version of `batchOperationCuckoo` with improved performance for large gaps between timestamps. Utilizes the `parlay::parallel_for` function to parallelize the edge processing.
 
-- It uses a nested loop to iterate through the adjacency list and prints each edge.
+#### `sortBatch(const std::vector<uint64_t> &sourceAdds, const std::vector<uint64_t> &destinationAdds, const std::vector<uint64_t> &timeAdds, libcuckoo::cuckoohash_map<uint64_t, Edge> &groupedData):`
+Sorts a batch of data (source, destination, time) and adds it to the specified cuckoo hash map (`groupedData`). Measures the execution time and prints the duration.
 
-### `addFromFile`
+#### `printGroupedData(libcuckoo::cuckoohash_map<uint64_t, Edge> &groupedData):`
+Prints the grouped data within the cuckoo hash map. It uses a lock table to iterate over the cuckoo hash map and its inner tables, displaying the source, destination, and timestamp for each edge.
 
-The `addFromFile` method reads edge data from a specified file and populates the adjacency list (`edges`) based on the grouped data obtained from `sortBatch`. It has the following key steps:
+#### `addBatch(int *source, int *destination, int *time, int numberElements):`
+Adds a batch of edges to the graph. It iterates over the provided arrays of source, destination, and time, adding each edge to the graph.
 
-1. **Reading and Preprocessing:**
-   - Reads edge data from the file, extracting commands, source, destination, and time information.
-   - Identifies the maximum vertex value encountered (`maxEdge`).
+#### `rangeQuery(uint64_t start, uint64_t end, void (*func)(uint64_t, uint64_t, uint64_t)):`
+Performs a range query on the graph data within the specified timestamp range. It iterates over the cuckoo hash map's lock table and executes the provided function for each edge within the specified range.
 
-2. **Sorting and Grouping:**
-   - Compares the number of unique source and destination vertices.
-   - Determines the `sortBySource` based on the comparison result.
-   - Creates vectors (`sourceAdds`, `destinationAdds`, `timeAdds`) to store edge data.
+#### `memoryConsumption(libcuckoo::cuckoohash_map<uint64_t, libcuckoo::cuckoohash_map<uint64_t, std::vector<uint64_t>>> &map):`
+Calculates and prints the memory consumption of the cuckoo hash map. It uses a lock table to iterate over the cuckoo hash map and its inner tables, summing up the memory consumption of keys, source vertices, and edges.
 
-3. **Grouping with `sortBatch`:**
-   - Calls `sortBatch` to group the edges based on the determined `sortFlag`.
-   - Receives the grouped data in the `groupedData` hash map.
 
-4. **Adding Grouped Edges to Adjacency List:**
-   - Iterates through the `groupedData` hash map.
-   - For each source vertex and its associated edges, adds the edges to the adjacency list using the `addEdge` method.
-
-5. **Sorting:**
-   - After processing the file, the adjacency list is sorted based on time using the `sortByTime` method.
-
-## `sortBatch`
-
-The `sortBatch` method is designed to efficiently group a batch of edges based on a specified sorting criterion (source or destination vertices). It takes the following parameters:
-
-- `sortBySource`: A flag indicating whether to group by source vertices (true) or destination vertices (false).
-- `sourceAdds`: A vector containing source vertices of the edges.
-- `destinationAdds`: A vector containing destination vertices of the edges.
-- `timeAdds`: A vector containing timestamps of the edges.
-- `groupedData`: A reference to a `cuckoohash_map` that will store the grouped data.
-
-This method creates a hash map (`groupedData`) where keys are source vertices, and values are vectors of pairs representing destination vertices and corresponding timestamps. It iterates through the input vectors, and for each edge, it inserts the data into the hash map under the appropriate source vertex.
-
-### 'printGroupedData`
-
-It involves printing the grouped data for a specific source vertex. It takes two parameters:
-
-- `source`: The source vertex for which the data is grouped.
-- `edges`: A vector of pairs representing destination vertices and corresponding timestamps for the given source.
