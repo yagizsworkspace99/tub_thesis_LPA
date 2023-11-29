@@ -156,12 +156,6 @@ void AdjList::addFromFile(const std::string &path) {
             printf("    - RangeQueryTest between: %" PRIu64 " and %" PRIu64 " at time %" PRIu64 "\n", b, c, a);
         });
     }
-    memoryConsumption(edges);
-
-    if (!file.is_open()) {
-        std::cerr << "Error: Could not open the file." << std::endl;
-        return;
-    }
 }
 
 void AdjList::batchOperationCuckoo(bool flag, libcuckoo::cuckoohash_map<uint64_t, Edge> &groupedData) {
