@@ -65,7 +65,7 @@ void AdjList::deleteSingleEdge(uint64_t source, uint64_t destination, uint64_t t
                 if (e.empty()) isEdgeEmpty = true;
             });
         }
-        //delete timestamp if edges is empty
+        //delete timestamp if edges is empty, bad performance
         if (isEdgeEmpty) {
             map.erase(time);
         }
@@ -75,7 +75,7 @@ void AdjList::deleteSingleEdge(uint64_t source, uint64_t destination, uint64_t t
 void AdjList::deleteEdge(uint64_t source, uint64_t destination, uint64_t time) {
 
     //check if edge to be deleted exists
-    bool flag;
+    bool flag = false;
 
     edges.find_fn(time,
                   [&destination, &flag, &source](Edge &e) {
@@ -156,6 +156,7 @@ void AdjList::addFromFile(const std::string &path) {
             printf("    - RangeQueryTest between: %" PRIu64 " and %" PRIu64 " at time %" PRIu64 "\n", b, c, a);
         });
     }
+    memoryConsumption(edges);
 
     if (!file.is_open()) {
         std::cerr << "Error: Could not open the file." << std::endl;
@@ -293,7 +294,7 @@ void AdjList::memoryConsumption(libcuckoo::cuckoohash_map<uint64_t, libcuckoo::c
             }
         }
     }
-    std::cout << memory<< std::endl;
+    std::cout << "Memory consumption in Bytes:" << memory << std::endl;
 }
 
 /*
