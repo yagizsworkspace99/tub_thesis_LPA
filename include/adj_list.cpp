@@ -3,6 +3,7 @@
 
 #include <fstream>
 #include <cinttypes>
+#include <set>
 
 typedef libcuckoo::cuckoohash_map<uint64_t, std::vector<uint64_t>> Edge;
 
@@ -121,6 +122,7 @@ void AdjList::addFromFile(const std::string &path) {
         uint64_t source, destination, time;
         std::string command;
         uint64_t maxTime = 0;
+        std::set<uint64_t> uniqueTimes;
         //maybe more efficient to go through the file twice?
         std::vector<uint64_t> sourceAdds{}, destinationAdds{}, timeAdds{};
         std::vector<uint64_t> sourceDels{}, destinationDels{}, timeDels{};
@@ -131,8 +133,9 @@ void AdjList::addFromFile(const std::string &path) {
                 sourceAdds.push_back(source);
                 destinationAdds.push_back(destination);
                 timeAdds.push_back(time);
+                uniqueTimes.insert(time);
             }
-            if (command == "delete") {
+            if (command == "add") {
                 sourceDels.push_back(source);
                 destinationDels.push_back(destination);
                 timeDels.push_back(time);
@@ -140,16 +143,23 @@ void AdjList::addFromFile(const std::string &path) {
         }
         file.close();
 
+        std::unordered_map<uint64_t, uint64_t> uniqueTimesMap;
+        int timesIt = 0;
+        for (const uint64_t &t: uniqueTimes) {
+            uniqueTimesMap[timesIt] = t;
+            timesIt++;
+        }
+
         //Create new hash map, keys are source vertices and values are vectors of integer pairs (destination, time).
         //This is then filled by sortBatch function.
         libcuckoo::cuckoohash_map<uint64_t, Edge> groupedDataAdds;
         libcuckoo::cuckoohash_map<uint64_t, Edge> groupedDataDels;
 
         sortBatch(sourceAdds, destinationAdds, timeAdds, groupedDataAdds);
-        batchOperationCuckoo(true, groupedDataAdds);
+        batchOperationCuckooParlay(true, groupedDataAdds, maxTime, uniqueTimesMap);
 
-        sortBatch(sourceDels, destinationDels, timeDels, groupedDataDels);
-        batchOperationCuckoo(false, groupedDataDels);
+        //sortBatch(sourceDels, destinationDels, timeDels, groupedDataDels);
+        //batchOperationCuckooParlay(false, groupedDataDels, maxTime);
         //addBatchCuckooParlay(groupedData, maxTime);
 
         rangeQuery(0, 10, [](uint64_t a, uint64_t b, uint64_t c) {
@@ -179,22 +189,22 @@ void AdjList::batchOperationCuckoo(bool flag, libcuckoo::cuckoohash_map<uint64_t
 }
 
 //doesn't terminate properly
-//terrible with large gaps between timestamps
 void AdjList::batchOperationCuckooParlay(bool flag, libcuckoo::cuckoohash_map<uint64_t, Edge> &groupedData,
-                                         uint64_t maxTime) {
+                                         uint64_t maxTime, std::unordered_map<uint64_t, uint64_t> uniqueTimesMap) {
     auto t1 = std::chrono::high_resolution_clock::now();
     auto lt = groupedData.lock_table();
 
-    parlay::parallel_for(lt.begin()->first, maxTime + 1, [&](uint64_t i) {
-        if (!lt.find(i)->second.empty()) {
-            Edge innerTbl = lt.find(i)->second;
-            auto lt2 = innerTbl.lock_table();
+    //parlay::parallel_for(lt.begin()->first, maxTime + 1, [&](uint64_t i) {
+    parlay::parallel_for(0, uniqueTimesMap.size(), [&](uint64_t i) {
+        uint64_t time = uniqueTimesMap[i];
 
-            for (const auto &vector: lt2) {
-                for (auto &edge: vector.second) {
-                    if (flag) addEdge(vector.first, edge, i);
-                    else deleteEdge(vector.first, edge, i);
-                }
+        Edge innerTbl = lt.find(time)->second;
+        auto lt2 = innerTbl.lock_table();
+
+        for (const auto &vector: lt2) {
+            for (auto &edge: vector.second) {
+                if (flag) addEdge(vector.first, edge, time);
+                else deleteEdge(vector.first, edge, time);
             }
         }
     });
