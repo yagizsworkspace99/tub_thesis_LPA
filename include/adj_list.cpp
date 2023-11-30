@@ -3,13 +3,34 @@
 
 #include <fstream>
 #include <cinttypes>
-#include <set>
 
 typedef libcuckoo::cuckoohash_map<uint64_t, std::vector<uint64_t>> Edge;
+typedef libcuckoo::cuckoohash_map<uint64_t, libcuckoo::cuckoohash_map<uint64_t, std::vector<uint64_t>>> NestedMap;
 
+bool AdjList::findEdge(uint64_t source, uint64_t destination, uint64_t time){
+    bool flag = false;
+    edges.find_fn(time,
+                  [&destination, &flag, &source](Edge &e) {
+                      e.find_fn(source,
+                                [&flag, &destination](std::vector<uint64_t> &d) {
+                                    flag = (std::find(d.begin(), d.end(), destination) != d.end());
+                                });
+                  });
+    return flag;
+}
 
-void AdjList::addSingleEdge(uint64_t source, uint64_t destination, uint64_t time,
-                            libcuckoo::cuckoohash_map<uint64_t, Edge> &map) {
+//finds a given edge with any timestamp
+//has a race condition issue
+bool AdjList::findEdge(uint64_t source, uint64_t destination, const std::unordered_map<uint64_t, uint64_t>& uniqueTimesMap){
+    bool flag = false;
+    for (auto i : uniqueTimesMap) {
+        flag = findEdge(source, destination, i.second);
+        if (flag) return flag;
+    }
+    return flag;
+}
+
+void AdjList::addSingleEdge(uint64_t source, uint64_t destination, uint64_t time, NestedMap &map) {
     if (map.contains(time)) {
         map.update_fn(time,
                       [&source, &destination](Edge &e) {
@@ -25,29 +46,16 @@ void AdjList::addSingleEdge(uint64_t source, uint64_t destination, uint64_t time
 }
 
 void AdjList::addEdge(uint64_t source, uint64_t destination, uint64_t time) {
-
     //filters out duplicates
-    bool flag;
-    edges.find_fn(time,
-                  [&destination, &flag, &source](Edge &e) {
-                      e.find_fn(source,
-                                [&flag, &destination](std::vector<uint64_t> &d) {
-                                    flag = (std::find(d.begin(), d.end(), destination) != d.end());
-                                });
-                  });
-
-    if (flag) return;
+    if (findEdge(source, destination, time)) return;
 
     //insert edges from source
     addSingleEdge(source, destination, time, edges);
     //insert edges from destination
     addSingleEdge(destination, source, time, edges);
-
 }
 
-
-void AdjList::deleteSingleEdge(uint64_t source, uint64_t destination, uint64_t time,
-                               libcuckoo::cuckoohash_map<uint64_t, Edge> &map) {
+void AdjList::deleteSingleEdge(uint64_t source, uint64_t destination, uint64_t time, NestedMap &map) {
     bool isDestinationEmpty = false;
     bool isEdgeEmpty = false;
 
@@ -63,10 +71,11 @@ void AdjList::deleteSingleEdge(uint64_t source, uint64_t destination, uint64_t t
         if (isDestinationEmpty) {
             map.find_fn(time, [&isEdgeEmpty, &source](Edge &e) {
                 e.erase(source);
+                //causes performance issues
                 if (e.empty()) isEdgeEmpty = true;
             });
         }
-        //delete timestamp if edges is empty, bad performance
+        //delete timestamp if edges is empty
         if (isEdgeEmpty) {
             map.erase(time);
         }
@@ -76,17 +85,8 @@ void AdjList::deleteSingleEdge(uint64_t source, uint64_t destination, uint64_t t
 void AdjList::deleteEdge(uint64_t source, uint64_t destination, uint64_t time) {
 
     //check if edge to be deleted exists
-    bool flag = false;
+    if (!findEdge(source, destination, time)) return;
 
-    edges.find_fn(time,
-                  [&destination, &flag, &source](Edge &e) {
-                      e.find_fn(source,
-                                [&flag, &destination](std::vector<uint64_t> &d) {
-                                    flag = (std::find(d.begin(), d.end(), destination) != d.end());
-                                });
-                  });
-
-    if (!flag) return;
     //delete edges from source
     deleteSingleEdge(source, destination, time, edges);
     //delete edges from destination
@@ -116,51 +116,56 @@ void AdjList::printGraph() {
     std::cout << "Total number of edges: " << count << std::endl;
 }
 
+void AdjList::fileReaderHelper(std::vector<uint64_t> &sourceVector, std::vector<uint64_t> &destinationVector,
+                               std::vector<uint64_t> &timeVector, std::set<uint64_t> &uniqueTimes,
+                               uint64_t source, uint64_t destination, uint64_t time){
+    sourceVector.push_back(source);
+    destinationVector.push_back(destination);
+    timeVector.push_back(time);
+    uniqueTimes.insert(time);
+}
+
+void AdjList::uniqueTimesHelper(std::unordered_map<uint64_t, uint64_t> &uniqueTimesMap, std::set<uint64_t> &uniqueTimes){
+    int i = 0;
+    for (const uint64_t &time: uniqueTimes) {
+        uniqueTimesMap[i] = time;
+        i++;
+    }
+}
+
 void AdjList::addFromFile(const std::string &path) {
     std::ifstream file(path);
     if (file.is_open()) {
-        uint64_t source, destination, time;
         std::string command;
-        uint64_t maxTime = 0;
-        std::set<uint64_t> uniqueTimes;
-        //maybe more efficient to go through the file twice?
+        uint64_t source, destination, time;
         std::vector<uint64_t> sourceAdds{}, destinationAdds{}, timeAdds{};
         std::vector<uint64_t> sourceDels{}, destinationDels{}, timeDels{};
+        std::set<uint64_t> uniqueTimesAdd, uniqueTimesDel;
+        std::unordered_map<uint64_t, uint64_t> uniqueTimesAddMap, uniqueTimesDelMap;
 
         while (file >> command >> source >> destination >> time) {
             if (command == "add") {
-                if (time > maxTime) maxTime = time;
-                sourceAdds.push_back(source);
-                destinationAdds.push_back(destination);
-                timeAdds.push_back(time);
-                uniqueTimes.insert(time);
+                fileReaderHelper(sourceAdds, destinationAdds, timeAdds, uniqueTimesAdd, source, destination, time);
             }
-            if (command == "add") {
-                sourceDels.push_back(source);
-                destinationDels.push_back(destination);
-                timeDels.push_back(time);
+            if (command == "delete") {
+                fileReaderHelper(sourceDels, destinationDels, timeDels, uniqueTimesDel, source, destination, time);
             }
         }
         file.close();
 
-        std::unordered_map<uint64_t, uint64_t> uniqueTimesMap;
-        int timesIt = 0;
-        for (const uint64_t &t: uniqueTimes) {
-            uniqueTimesMap[timesIt] = t;
-            timesIt++;
-        }
+        uniqueTimesHelper(uniqueTimesAddMap, uniqueTimesAdd);
+        uniqueTimesHelper(uniqueTimesDelMap, uniqueTimesDel);
+
 
         //Create new hash map, keys are source vertices and values are vectors of integer pairs (destination, time).
         //This is then filled by sortBatch function.
-        libcuckoo::cuckoohash_map<uint64_t, Edge> groupedDataAdds;
-        libcuckoo::cuckoohash_map<uint64_t, Edge> groupedDataDels;
+        libcuckoo::cuckoohash_map<uint64_t, Edge> groupedDataAdds, groupedDataDels;
 
         sortBatch(sourceAdds, destinationAdds, timeAdds, groupedDataAdds);
-        batchOperationCuckooParlay(true, groupedDataAdds, maxTime, uniqueTimesMap);
+        batchOperationCuckooParlay(true, groupedDataAdds, uniqueTimesAddMap);
 
-        //sortBatch(sourceDels, destinationDels, timeDels, groupedDataDels);
-        //batchOperationCuckooParlay(false, groupedDataDels, maxTime);
-        //addBatchCuckooParlay(groupedData, maxTime);
+        sortBatch(sourceDels, destinationDels, timeDels, groupedDataDels);
+        batchOperationCuckooParlay(false, groupedDataDels, uniqueTimesDelMap);
 
         rangeQuery(0, 10, [](uint64_t a, uint64_t b, uint64_t c) {
             printf("    - RangeQueryTest between: %" PRIu64 " and %" PRIu64 " at time %" PRIu64 "\n", b, c, a);
@@ -168,7 +173,7 @@ void AdjList::addFromFile(const std::string &path) {
     }
 }
 
-void AdjList::batchOperationCuckoo(bool flag, libcuckoo::cuckoohash_map<uint64_t, Edge> &groupedData) {
+void AdjList::batchOperationCuckoo(bool insert, NestedMap &groupedData) {
     auto t1 = std::chrono::high_resolution_clock::now();
     auto lt = groupedData.lock_table();
 
@@ -178,7 +183,7 @@ void AdjList::batchOperationCuckoo(bool flag, libcuckoo::cuckoohash_map<uint64_t
 
         for (const auto &vector: lt2) {
             for (auto &edge: vector.second) {
-                if (flag) addEdge(vector.first, edge, innerTbl.first);
+                if (insert) addEdge(vector.first, edge, innerTbl.first);
                 else deleteEdge(vector.first, edge, innerTbl.first);
             }
         }
@@ -189,12 +194,10 @@ void AdjList::batchOperationCuckoo(bool flag, libcuckoo::cuckoohash_map<uint64_t
 }
 
 //doesn't terminate properly
-void AdjList::batchOperationCuckooParlay(bool flag, libcuckoo::cuckoohash_map<uint64_t, Edge> &groupedData,
-                                         uint64_t maxTime, std::unordered_map<uint64_t, uint64_t> uniqueTimesMap) {
+void AdjList::batchOperationCuckooParlay(bool insert, NestedMap &groupedData, std::unordered_map<uint64_t, uint64_t> uniqueTimesMap) {
     auto t1 = std::chrono::high_resolution_clock::now();
     auto lt = groupedData.lock_table();
 
-    //parlay::parallel_for(lt.begin()->first, maxTime + 1, [&](uint64_t i) {
     parlay::parallel_for(0, uniqueTimesMap.size(), [&](uint64_t i) {
         uint64_t time = uniqueTimesMap[i];
 
@@ -203,7 +206,7 @@ void AdjList::batchOperationCuckooParlay(bool flag, libcuckoo::cuckoohash_map<ui
 
         for (const auto &vector: lt2) {
             for (auto &edge: vector.second) {
-                if (flag) addEdge(vector.first, edge, time);
+                if (insert) addEdge(vector.first, edge, time);
                 else deleteEdge(vector.first, edge, time);
             }
         }
@@ -214,7 +217,7 @@ void AdjList::batchOperationCuckooParlay(bool flag, libcuckoo::cuckoohash_map<ui
 }
 
 void AdjList::sortBatch(const std::vector<uint64_t> &sourceAdds, const std::vector<uint64_t> &destinationAdds,
-                        const std::vector<uint64_t> &timeAdds, libcuckoo::cuckoohash_map<uint64_t, Edge> &groupedData) {
+                        const std::vector<uint64_t> &timeAdds, NestedMap &groupedData) {
     auto t1 = std::chrono::high_resolution_clock::now();
 
     // Determine the number of iterations
@@ -255,12 +258,6 @@ void AdjList::printGroupedData(libcuckoo::cuckoohash_map<uint64_t, Edge> &groupe
     std::cout << "-------------------------------------" << std::endl;
 }
 
-void AdjList::addBatch(int *source, int *destination, int *time, int numberElements) {
-    for (int i = 0; i < numberElements; ++i) {
-        addEdge(source[i], destination[i], time[i]);
-    }
-}
-
 void AdjList::rangeQuery(uint64_t start, uint64_t end, void (*func)(uint64_t, uint64_t, uint64_t)) {
 
     auto lt = edges.lock_table();
@@ -282,7 +279,7 @@ void AdjList::rangeQuery(uint64_t start, uint64_t end, void (*func)(uint64_t, ui
     }
 }
 
-void AdjList::memoryConsumption(libcuckoo::cuckoohash_map<uint64_t, libcuckoo::cuckoohash_map<uint64_t, std::vector<uint64_t>>> &map) {
+void AdjList::memoryConsumption(NestedMap &map) {
 
     auto lt = map.lock_table();
     uint64_t memory=0;
@@ -300,22 +297,3 @@ void AdjList::memoryConsumption(libcuckoo::cuckoohash_map<uint64_t, libcuckoo::c
     }
     std::cout << "Memory consumption in Bytes:" << memory << std::endl;
 }
-
-/*
-//No longer needed
-void AdjList::sortByTime() {
-    for (int i = 0; i < maxEdge; ++i) {
-        Edge out;
-
-        if(edges.contains(i)){
-            edges.update_fn(i,
-                            [](Edge &e){ std::sort(e.begin(), e.end(), compareTime);});
-        }
-    }
-}
-
-bool AdjList::compareTime(std::pair<uint64_t, uint64_t> i1, std::pair<uint64_t, uint64_t> i2) {
-    return (i1.second < i2.second);
-}
-
-*/
