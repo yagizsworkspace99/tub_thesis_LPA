@@ -7,6 +7,13 @@
 typedef libcuckoo::cuckoohash_map<uint64_t, std::vector<uint64_t>> Edge;
 typedef libcuckoo::cuckoohash_map<uint64_t, libcuckoo::cuckoohash_map<uint64_t, std::vector<uint64_t>>> NestedMap;
 
+/**
+ * Checks if the given edge exists in the graph.
+ * @param source node of the edge
+ * @param destination node of the edge
+ * @param time timestamp of the edge
+ * @return true if the edge was found
+ */
 bool AdjList::findEdge(uint64_t source, uint64_t destination, uint64_t time){
     bool flag = false;
     edges.find_fn(time,
@@ -19,18 +26,32 @@ bool AdjList::findEdge(uint64_t source, uint64_t destination, uint64_t time){
     return flag;
 }
 
-//finds a given edge with any timestamp
-//has a race condition issue
+//has a race condition issue when insertions/deletions are occurring
+/**
+ * Checks if the an edge between @p source and @p destination exists in any of the given timestamps.
+ * @param source node of the edge
+ * @param destination node of the edge
+ * @param uniqueTimesMap Map of timestamps which are to be checked for the edge.
+ * @return true if at least one edge was found.
+ * @overload
+ */
 bool AdjList::findEdge(uint64_t source, uint64_t destination, const std::unordered_map<uint64_t, uint64_t>& uniqueTimesMap){
     bool flag = false;
     for (auto i : uniqueTimesMap) {
         flag = findEdge(source, destination, i.second);
-        if (flag) return flag;
+        if (flag) break;
     }
     return flag;
 }
 
-void AdjList::addSingleEdge(uint64_t source, uint64_t destination, uint64_t time, NestedMap &map) {
+/**
+ * Inserts an edge into the given nested cuckoo map @p map.
+ * @param source node of the edge
+ * @param destination node of the edge
+ * @param time timestamp of the edge
+ * @param map
+ */
+void AdjList::insertEdgeDirected(uint64_t source, uint64_t destination, uint64_t time, NestedMap &map) {
     if (map.contains(time)) {
         map.update_fn(time,
                       [&source, &destination](Edge &e) {
@@ -45,23 +66,38 @@ void AdjList::addSingleEdge(uint64_t source, uint64_t destination, uint64_t time
     }
 }
 
-void AdjList::addEdge(uint64_t source, uint64_t destination, uint64_t time) {
+/**
+ * Checks if the given edge to be inserted is already in the graph. If not, calls insertEdgeDirected twice to insert the
+ * the edge in both directions (@p source -> @p destination and @p destination -> @p source).
+ * @see AdjList::insertEdgeDirected
+ * @param source node of the edge
+ * @param destination node of the edge
+ * @param time timestamp of the edge
+ */
+void AdjList::insertEdgeUndirected(uint64_t source, uint64_t destination, uint64_t time) {
     //filters out duplicates
     if (findEdge(source, destination, time)) return;
 
     //insert edges from source
-    addSingleEdge(source, destination, time, edges);
+    insertEdgeDirected(source, destination, time, edges);
     //insert edges from destination
-    addSingleEdge(destination, source, time, edges);
+    insertEdgeDirected(destination, source, time, edges);
 }
 
-void AdjList::deleteSingleEdge(uint64_t source, uint64_t destination, uint64_t time, NestedMap &map) {
+/**
+ * Deletes the given edge from the graph. Functions similar to insertEdgeDirected.
+ * Also removes keys if their values are empty.
+ * @param source node of the edge
+ * @param destination node of the edge
+ * @param time timestamp of the edge
+ */
+void AdjList::deleteEdgeDirected(uint64_t source, uint64_t destination, uint64_t time) {
     bool isDestinationEmpty = false;
     bool isEdgeEmpty = false;
 
-    if (map.contains(time)) {
+    if (edges.contains(time)) {
 
-        map.update_fn(time, [&isDestinationEmpty, &source, &destination](Edge &e) {
+        edges.update_fn(time, [&isDestinationEmpty, &source, &destination](Edge &e) {
             e.update_fn(source, [&isDestinationEmpty, &destination](std::vector<uint64_t> &d) {
                 d.erase(std::find(d.begin(), d.end(), destination));
                 if (d.empty()) isDestinationEmpty = true;
@@ -69,7 +105,7 @@ void AdjList::deleteSingleEdge(uint64_t source, uint64_t destination, uint64_t t
         });
         //delete source node if it has no edges (destinations)
         if (isDestinationEmpty) {
-            map.find_fn(time, [&isEdgeEmpty, &source](Edge &e) {
+            edges.find_fn(time, [&isEdgeEmpty, &source](Edge &e) {
                 e.erase(source);
                 //causes performance issues
                 if (e.empty()) isEdgeEmpty = true;
@@ -77,22 +113,30 @@ void AdjList::deleteSingleEdge(uint64_t source, uint64_t destination, uint64_t t
         }
         //delete timestamp if edges is empty
         if (isEdgeEmpty) {
-            map.erase(time);
+            edges.erase(time);
         }
     }
 }
 
-void AdjList::deleteEdge(uint64_t source, uint64_t destination, uint64_t time) {
-
+/**
+ * Works similar to insertEdgeUndirected.
+ * @param source node of the edge
+ * @param destination node of the edge
+ * @param time timestamp of the edge
+ */
+void AdjList::deleteEdgeUndirected(uint64_t source, uint64_t destination, uint64_t time) {
     //check if edge to be deleted exists
     if (!findEdge(source, destination, time)) return;
 
     //delete edges from source
-    deleteSingleEdge(source, destination, time, edges);
+    deleteEdgeDirected(source, destination, time);
     //delete edges from destination
-    deleteSingleEdge(destination, source, time, edges);
+    deleteEdgeDirected(destination, source, time);
 }
 
+/**
+ * Prints all timestamps and the edge contained in them.
+ */
 void AdjList::printGraph() {
     std::cout << "Printing all edges:" << std::endl << std::endl;
     uint64_t count = 0;
@@ -116,6 +160,16 @@ void AdjList::printGraph() {
     std::cout << "Total number of edges: " << count << std::endl;
 }
 
+/**
+ * Helper function to organize the read data.
+ * @param sourceVector container for all read sources with the same command.
+ * @param destinationVector container for all read destinations with the same command.
+ * @param timeVector container for all read timestamps with the same command.
+ * @param uniqueTimes container for all read unique timestamps with the same command.
+ * @param source value to be inserted
+ * @param destination value to be inserted
+ * @param time value to be inserted
+ */
 void AdjList::fileReaderHelper(std::vector<uint64_t> &sourceVector, std::vector<uint64_t> &destinationVector,
                                std::vector<uint64_t> &timeVector, std::set<uint64_t> &uniqueTimes,
                                uint64_t source, uint64_t destination, uint64_t time){
@@ -125,6 +179,11 @@ void AdjList::fileReaderHelper(std::vector<uint64_t> &sourceVector, std::vector<
     uniqueTimes.insert(time);
 }
 
+/**
+ * Helper function to organise unique timestamps.
+ * @param uniqueTimesMap container for unique times mapped to a key that iterates up from 0
+ * @param uniqueTimes values to be inserted
+ */
 void AdjList::uniqueTimesHelper(std::unordered_map<uint64_t, uint64_t> &uniqueTimesMap, std::set<uint64_t> &uniqueTimes){
     int i = 0;
     for (const uint64_t &time: uniqueTimes) {
@@ -133,6 +192,10 @@ void AdjList::uniqueTimesHelper(std::unordered_map<uint64_t, uint64_t> &uniqueTi
     }
 }
 
+/**
+ * Reads and extracts data from the file and calls functions to use the data on the graph.
+ * @param path input file
+ */
 void AdjList::addFromFile(const std::string &path) {
     std::ifstream file(path);
     if (file.is_open()) {
@@ -162,10 +225,10 @@ void AdjList::addFromFile(const std::string &path) {
         libcuckoo::cuckoohash_map<uint64_t, Edge> groupedDataAdds, groupedDataDels;
 
         sortBatch(sourceAdds, destinationAdds, timeAdds, groupedDataAdds);
-        batchOperationCuckooParlay(true, groupedDataAdds, uniqueTimesAddMap);
+        batchOperationParlay(true, groupedDataAdds, uniqueTimesAddMap);
 
         sortBatch(sourceDels, destinationDels, timeDels, groupedDataDels);
-        batchOperationCuckooParlay(false, groupedDataDels, uniqueTimesDelMap);
+        batchOperationParlay(false, groupedDataDels, uniqueTimesDelMap);
 
         rangeQuery(0, 10, [](uint64_t a, uint64_t b, uint64_t c) {
             printf("    - RangeQueryTest between: %" PRIu64 " and %" PRIu64 " at time %" PRIu64 "\n", b, c, a);
@@ -173,7 +236,12 @@ void AdjList::addFromFile(const std::string &path) {
     }
 }
 
-void AdjList::batchOperationCuckoo(bool insert, NestedMap &groupedData) {
+/**
+ * Iterated through @p groupedData and calls insertEdgeUndirected or deleteEdgeUndirected accordingly.
+ * @param insert dictates whether to insert or delete the given data
+ * @param groupedData Nested map of edges that are to be inserted/deleted
+ */
+void AdjList::batchOperation(bool insert, NestedMap &groupedData) {
     auto t1 = std::chrono::high_resolution_clock::now();
     auto lt = groupedData.lock_table();
 
@@ -183,8 +251,8 @@ void AdjList::batchOperationCuckoo(bool insert, NestedMap &groupedData) {
 
         for (const auto &vector: lt2) {
             for (auto &edge: vector.second) {
-                if (insert) addEdge(vector.first, edge, innerTbl.first);
-                else deleteEdge(vector.first, edge, innerTbl.first);
+                if (insert) insertEdgeUndirected(vector.first, edge, innerTbl.first);
+                else deleteEdgeUndirected(vector.first, edge, innerTbl.first);
             }
         }
     }
@@ -194,7 +262,13 @@ void AdjList::batchOperationCuckoo(bool insert, NestedMap &groupedData) {
 }
 
 //doesn't terminate properly
-void AdjList::batchOperationCuckooParlay(bool insert, NestedMap &groupedData, std::unordered_map<uint64_t, uint64_t> uniqueTimesMap) {
+/**
+ * Works similar to batchOperation. Iterates in parallel.
+ * @param insert dictates whether to insert or delete the given data
+ * @param groupedData Nested cuckoo map of edges that are to be inserted/deleted
+ * @param uniqueTimesMap helper parameter to iterate through @p groupedData
+ */
+void AdjList::batchOperationParlay(bool insert, NestedMap &groupedData, std::unordered_map<uint64_t, uint64_t> uniqueTimesMap) {
     auto t1 = std::chrono::high_resolution_clock::now();
     auto lt = groupedData.lock_table();
 
@@ -206,8 +280,8 @@ void AdjList::batchOperationCuckooParlay(bool insert, NestedMap &groupedData, st
 
         for (const auto &vector: lt2) {
             for (auto &edge: vector.second) {
-                if (insert) addEdge(vector.first, edge, time);
-                else deleteEdge(vector.first, edge, time);
+                if (insert) insertEdgeUndirected(vector.first, edge, time);
+                else deleteEdgeUndirected(vector.first, edge, time);
             }
         }
     });
@@ -216,6 +290,13 @@ void AdjList::batchOperationCuckooParlay(bool insert, NestedMap &groupedData, st
     std::cout << "addBatchCuckooParlay has taken " << ms_int.count() << "ms\n";
 }
 
+/**
+ * Organises the read data and calls insertEdgeDirected to insert them into @p groupedData.
+ * @param sourceAdds list of source nodes
+ * @param destinationAdds list of destination nodes
+ * @param timeAdds list of timestamps
+ * @param groupedData Nested cuckoo map and container for the organised data
+ */
 void AdjList::sortBatch(const std::vector<uint64_t> &sourceAdds, const std::vector<uint64_t> &destinationAdds,
                         const std::vector<uint64_t> &timeAdds, NestedMap &groupedData) {
     auto t1 = std::chrono::high_resolution_clock::now();
@@ -229,7 +310,7 @@ void AdjList::sortBatch(const std::vector<uint64_t> &sourceAdds, const std::vect
         uint64_t destination = destinationAdds[i];
         uint64_t time = timeAdds[i];
 
-        addSingleEdge(source, destination, time, groupedData);
+        insertEdgeDirected(source, destination, time, groupedData);
     }
     auto t2 = std::chrono::high_resolution_clock::now();
     auto ms_int = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1);
@@ -238,6 +319,10 @@ void AdjList::sortBatch(const std::vector<uint64_t> &sourceAdds, const std::vect
     //printGroupedData(groupedData);
 }
 
+/**
+ * Prints the edges in @p groupedData similar to printGraph.
+ * @param groupedData
+ */
 void AdjList::printGroupedData(libcuckoo::cuckoohash_map<uint64_t, Edge> &groupedData) {
     std::cout << "Printing grouped data:" << std::endl << std::endl;
     for (auto &it: groupedData.lock_table()) {

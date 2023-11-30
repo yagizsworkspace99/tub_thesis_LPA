@@ -19,12 +19,12 @@ private:
 
     bool findEdge(uint64_t source, uint64_t destination, uint64_t time);
     bool findEdge(uint64_t source, uint64_t destination, const std::unordered_map<uint64_t, uint64_t>& uniqueTimesMap);
-    static void addSingleEdge(uint64_t source, uint64_t destination, uint64_t time, NestedMap &map);
-    void addEdge(uint64_t source, uint64_t destination, uint64_t time);
-    static void deleteSingleEdge(uint64_t source, uint64_t destination, uint64_t time, NestedMap &map);
-    void deleteEdge(uint64_t source, uint64_t destination, uint64_t time);
-    void batchOperationCuckoo(bool insert, NestedMap &groupedData);
-    void batchOperationCuckooParlay(bool insert, NestedMap &groupedData, std::unordered_map<uint64_t, uint64_t> uniqueTimesMap);
+    static void insertEdgeDirected(uint64_t source, uint64_t destination, uint64_t time, NestedMap &map);
+    void insertEdgeUndirected(uint64_t source, uint64_t destination, uint64_t time);
+    void deleteEdgeDirected(uint64_t source, uint64_t destination, uint64_t time);
+    void deleteEdgeUndirected(uint64_t source, uint64_t destination, uint64_t time);
+    void batchOperation(bool insert, NestedMap &groupedData);
+    void batchOperationParlay(bool insert, NestedMap &groupedData, std::unordered_map<uint64_t, uint64_t> uniqueTimesMap);
     static void sortBatch(const std::vector<uint64_t>& sourceAdds, const std::vector<uint64_t>& destinationAdds,
                           const std::vector<uint64_t>& timeAdds, NestedMap &groupedData);
     static void printGroupedData(NestedMap &groupedData);
