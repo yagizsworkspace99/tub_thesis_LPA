@@ -28,17 +28,19 @@ bool AdjList::findEdge(uint64_t source, uint64_t destination, uint64_t time){
 
 //has a race condition issue when insertions/deletions are occurring
 /**
- * Checks if the an edge between @p source and @p destination exists in any of the given timestamps.
+ * Checks if the an edge between @p source and @p destination exists in the given range of timestamps.
  * @param source node of the edge
  * @param destination node of the edge
- * @param uniqueTimesMap Map of timestamps which are to be checked for the edge.
- * @return true if at least one edge was found.
+ * @param start of the range inclusive
+ * @param end end of the range exclusive
+ * @return true if at least one edge was found
  * @overload
  */
-bool AdjList::findEdge(uint64_t source, uint64_t destination, const std::unordered_map<uint64_t, uint64_t>& uniqueTimesMap){
+bool AdjList::findEdge(uint64_t source, uint64_t destination, uint64_t start, uint64_t end){
     bool flag = false;
-    for (auto i : uniqueTimesMap) {
-        flag = findEdge(source, destination, i.second);
+    auto uniqueTimesMap = genUniqueTimeMap(start, end);
+    for (auto time : uniqueTimesMap) {
+        flag = findEdge(source, destination, time.second);
         if (flag) break;
     }
     return flag;
@@ -150,8 +152,7 @@ void AdjList::printGraph() {
 
         for (const auto &vector: lt2) {
             for (auto &edge: vector.second) {
-                printf("    - between: %" PRIu64 " and %" PRIu64 " at time %" PRIu64 "\n", vector.first, edge,
-                       innerTbl.first);
+                printf("    - between: %" PRIu64 " and %" PRIu64 " at time %" PRIu64 "\n", vector.first, edge, innerTbl.first);
                 count++;
             }
         }
@@ -180,17 +181,21 @@ void AdjList::fileReaderHelper(std::vector<uint64_t> &sourceVector, std::vector<
 }
 
 /**
- * Helper function to organise unique timestamps.
+ * Helper function to organise unique timestamps. Inserts or removes them from uniqueTimestamps.
  * @param uniqueTimesMap container for unique times mapped to a key that iterates up from 0
  * @param uniqueTimes values to be inserted
+ * @param insert determines whether to insert or delete from uniqueTimestamps
  */
-void AdjList::uniqueTimesHelper(std::unordered_map<uint64_t, uint64_t> &uniqueTimesMap, std::set<uint64_t> &uniqueTimes){
+void AdjList::uniqueTimesHelper(std::unordered_map<uint64_t, uint64_t> &uniqueTimesMap, std::set<uint64_t> &uniqueTimes, bool insert){
     int i = 0;
     for (const uint64_t &time: uniqueTimes) {
         uniqueTimesMap[i] = time;
+        if (insert) uniqueTimestamps.insert(time);
+        else uniqueTimestamps.erase(time);
         i++;
     }
 }
+
 
 /**
  * Reads and extracts data from the file and calls functions to use the data on the graph.
@@ -216,8 +221,8 @@ void AdjList::addFromFile(const std::string &path) {
         }
         file.close();
 
-        uniqueTimesHelper(uniqueTimesAddMap, uniqueTimesAdd);
-        uniqueTimesHelper(uniqueTimesDelMap, uniqueTimesDel);
+        uniqueTimesHelper(uniqueTimesAddMap, uniqueTimesAdd, true);
+        uniqueTimesHelper(uniqueTimesDelMap, uniqueTimesDel, false);
 
 
         //Create new hash map, keys are source vertices and values are vectors of integer pairs (destination, time).
@@ -343,24 +348,28 @@ void AdjList::printGroupedData(libcuckoo::cuckoohash_map<uint64_t, Edge> &groupe
     std::cout << "-------------------------------------" << std::endl;
 }
 
+//TODO: this is very similar to the overloaded find function, test which one is faster and/or more secure (race condition)
+/**
+ * Applies the given function @p func to all edges within the given range.
+ * @param start of the range inclusive
+ * @param end of the range exclusive
+ * @param func
+ */
 void AdjList::rangeQuery(uint64_t start, uint64_t end, void (*func)(uint64_t, uint64_t, uint64_t)) {
 
     auto lt = edges.lock_table();
+    auto uniqueTimesMap = genUniqueTimeMap(start, end);
 
-    while(start <=end){
-        auto it = lt.find(start);
-        if(it!=lt.end()){
-            uint64_t key = it->first;
-            Edge edgeData = it->second;
-            auto lt2 = edgeData.lock_table();
+    for (auto &time: uniqueTimesMap) {
+        uint64_t key = lt.find(time.second)->first;
+        Edge edgeData = lt.find(time.second)->second;
+        auto lt2 = edgeData.lock_table();
 
-            for (const auto &vector: lt2) {
-                for (auto &edge: vector.second) {
-                    func(key, vector.first, edge);
-                }
+        for (const auto &vector: lt2) {
+            for (auto &edge: vector.second) {
+                func(key, vector.first, edge);
             }
-            start++;
-        }else start++;
+        }
     }
 }
 
@@ -381,4 +390,22 @@ void AdjList::memoryConsumption(NestedMap &map) {
         }
     }
     std::cout << "Memory consumption in Bytes:" << memory << std::endl;
+}
+
+/**
+ * Generates a map of timestamps that are in the graph and within the given range.
+ * @param start of the range inclusive
+ * @param end of the range exclusive
+ * @return the generated map
+ */
+std::unordered_map<uint64_t, uint64_t> AdjList::genUniqueTimeMap(uint64_t start, uint64_t end) {
+    std::unordered_map<uint64_t, uint64_t> map;
+    int i = 0;
+    for (auto &time : uniqueTimestamps) {
+        if (start < time && time < end){
+            map[i] = time;
+            i++;
+        }
+    }
+    return map;
 }

@@ -3,6 +3,7 @@
 
 #include <set>
 #include "libcuckoo/cuckoohash_map.hh"
+
 typedef libcuckoo::cuckoohash_map<uint64_t, libcuckoo::cuckoohash_map<uint64_t, std::vector<uint64_t>>> NestedMap;
 
 class AdjList{
@@ -13,12 +14,13 @@ public:
 private:
     //time < source < list of destinations>>
     NestedMap edges;
+    std::set<uint64_t> uniqueTimestamps;
 
     //TODO: std::unorderedmap<uint64_t, libcuckoo::cuckoohash_map<uint64_t, std::vector<uint64_t>>>
     //TODO: std::map<uint64_t, libcuckoo::cuckoohash_map<uint64_t, std::vector<uint64_t>>>
 
     bool findEdge(uint64_t source, uint64_t destination, uint64_t time);
-    bool findEdge(uint64_t source, uint64_t destination, const std::unordered_map<uint64_t, uint64_t>& uniqueTimesMap);
+    bool findEdge(uint64_t source, uint64_t destination, uint64_t start, uint64_t end);
     static void insertEdgeDirected(uint64_t source, uint64_t destination, uint64_t time, NestedMap &map);
     void insertEdgeUndirected(uint64_t source, uint64_t destination, uint64_t time);
     void deleteEdgeDirected(uint64_t source, uint64_t destination, uint64_t time);
@@ -33,7 +35,8 @@ private:
     static void fileReaderHelper(std::vector<uint64_t> &sourceVector, std::vector<uint64_t> &destinationVector,
                           std::vector<uint64_t> &timeVector, std::set<uint64_t> &uniqueTimes, uint64_t source,
                           uint64_t destination, uint64_t time);
-    static void uniqueTimesHelper(std::unordered_map<uint64_t, uint64_t> &uniqueTimesMap, std::set<uint64_t> &uniqueTimes);
+    void uniqueTimesHelper(std::unordered_map<uint64_t, uint64_t> &uniqueTimesMap, std::set<uint64_t> &uniqueTimes, bool insert);
+    std::unordered_map<uint64_t, uint64_t> genUniqueTimeMap(uint64_t start, uint64_t end);
 };
 
 #endif //TEMPUS_ADJ_LIST_H
