@@ -116,6 +116,7 @@ void AdjList::deleteEdgeDirected(uint64_t source, uint64_t destination, uint64_t
         //delete timestamp if edges is empty
         if (isEdgeEmpty) {
             edges.erase(time);
+            uniqueTimestamps.erase(time);
         }
     }
 }
@@ -191,7 +192,6 @@ void AdjList::uniqueTimesHelper(std::unordered_map<uint64_t, uint64_t> &uniqueTi
     for (const uint64_t &time: uniqueTimes) {
         uniqueTimesMap[i] = time;
         if (insert) uniqueTimestamps.insert(time);
-        else uniqueTimestamps.erase(time);
         i++;
     }
 }
