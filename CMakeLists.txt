@@ -7,7 +7,7 @@ set(CMAKE_CXX_STANDARD 17)
 add_executable(tempus main.cpp
         include/adj_list.cpp)
 
-add_subdirectory(include/libcuckoo/libcuckoo)
+add_subdirectory(include/libcuckoo/)
 add_subdirectory(include/parlaylib/)
 
 target_link_libraries(tempus PUBLIC
