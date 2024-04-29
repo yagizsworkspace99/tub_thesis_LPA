@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="libcuckoo"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;CMake Files\include\;CMake Files\include\parlaylib\;CMake Files\include\parlaylib\cmake\;CMake Files\include\parlaylib\analysis\;CMake Files\include\libcuckoo\;CMake Files\include\libcuckoo\libcuckoo\;CMake Files\include\libcuckoo\libcuckoo-c\;CMake Files\include\libcuckoo\tests\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/Users/yagizsemercioglu/Desktop/tempus-framework/cmake-build-debug/include/libcuckoo"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/Users/yagizsemercioglu/Desktop/tempus-framework/cmake-build-debug/include/libcuckoo/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/Users/yagizsemercioglu/Desktop/tempus-framework/cmake-build-debug/include/libcuckoo/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/Users/yagizsemercioglu/Desktop/tempus-framework/cmake-build-debug/include/libcuckoo/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/Users/yagizsemercioglu/Desktop/tempus-framework/cmake-build-debug/include/libcuckoo/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/Users/yagizsemercioglu/Desktop/tempus-framework/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="/Users/yagizsemercioglu/Desktop/tempus-framework/include/parlaylib/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\include\parlaylib\"/>
+		</Unit>
+		<Unit filename="/Users/yagizsemercioglu/Desktop/tempus-framework/include/parlaylib/cmake/ParlayConfig.cmake.in">
+			<Option virtualFolder="CMake Files\include\parlaylib\cmake\"/>
+		</Unit>
+		<Unit filename="/Users/yagizsemercioglu/Desktop/tempus-framework/include/parlaylib/cmake/danalysis.cmake">
+			<Option virtualFolder="CMake Files\include\parlaylib\cmake\"/>
+		</Unit>
+		<Unit filename="/Users/yagizsemercioglu/Desktop/tempus-framework/include/parlaylib/analysis/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\include\parlaylib\analysis\"/>
+		</Unit>
+		<Unit filename="/Users/yagizsemercioglu/Desktop/tempus-framework/include/libcuckoo/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\include\libcuckoo\"/>
+		</Unit>
+		<Unit filename="/Users/yagizsemercioglu/Desktop/tempus-framework/include/libcuckoo/libcuckoo/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\include\libcuckoo\libcuckoo\"/>
+		</Unit>
+		<Unit filename="/Users/yagizsemercioglu/Desktop/tempus-framework/include/libcuckoo/libcuckoo-c/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\include\libcuckoo\libcuckoo-c\"/>
+		</Unit>
+		<Unit filename="/Users/yagizsemercioglu/Desktop/tempus-framework/include/libcuckoo/tests/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\include\libcuckoo\tests\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>

@@ -4,8 +4,15 @@
 #include <fstream>
 #include <cinttypes>
 
+#include <map>
+#include <functional>
+#include "oriented_graph.h"
+
+
+
 typedef libcuckoo::cuckoohash_map<uint64_t, std::vector<uint64_t>> Edge;
 typedef libcuckoo::cuckoohash_map<uint64_t, libcuckoo::cuckoohash_map<uint64_t, std::vector<uint64_t>>> NestedMap;
+oriented_graph og;
 
 /**
  * Checks if the given edge exists in the graph.
@@ -84,6 +91,11 @@ void AdjList::insertEdgeUndirected(uint64_t source, uint64_t destination, uint64
     insertEdgeDirected(source, destination, time, edges);
     //insert edges from destination
     insertEdgeDirected(destination, source, time, edges);
+    if(time > 0){
+        og.InsDel.push_back(std::make_tuple(source, destination, time, 1));
+    }
+
+
 }
 
 /**
@@ -105,6 +117,7 @@ void AdjList::deleteEdgeDirected(uint64_t source, uint64_t destination, uint64_t
                 if (d.empty()) isDestinationEmpty = true;
             });
         });
+
         //delete source node if it has no edges (destinations)
         if (isDestinationEmpty) {
             edges.find_fn(time, [&isEdgeEmpty, &source](Edge &e) {
@@ -135,6 +148,12 @@ void AdjList::deleteEdgeUndirected(uint64_t source, uint64_t destination, uint64
     deleteEdgeDirected(source, destination, time);
     //delete edges from destination
     deleteEdgeDirected(destination, source, time);
+
+    if(time > 0){
+        og.InsDel.push_back(std::make_tuple(source, destination, time,0));
+    }
+
+
 }
 
 /**
@@ -358,6 +377,7 @@ void AdjList::printGroupedData(libcuckoo::cuckoohash_map<uint64_t, Edge> &groupe
 void AdjList::rangeQuery(uint64_t start, uint64_t end, void (*func)(uint64_t, uint64_t, uint64_t)) {
 
     auto lt = edges.lock_table();
+
     auto uniqueTimesMap = genUniqueTimeMap(start, end);
 
     for (auto &time: uniqueTimesMap) {
@@ -409,3 +429,17 @@ std::unordered_map<uint64_t, uint64_t> AdjList::genUniqueTimeMap(uint64_t start,
     }
     return map;
 }
+
+NestedMap& AdjList::getEdges(){
+    return this->edges;
+
+}
+
+std::function<void(uint64_t, uint64_t, uint64_t, NestedMap&)> AdjList::getInsertEdgeDirectedFunction() {
+    return [this](uint64_t source, uint64_t destination, uint64_t time, NestedMap& map) {
+        this->insertEdgeDirected(source, destination, time, map);
+    };
+}
+
+
+

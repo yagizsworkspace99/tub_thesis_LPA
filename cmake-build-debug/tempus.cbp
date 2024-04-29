@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="tempus"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;CMake Files\include\;CMake Files\include\parlaylib\;CMake Files\include\parlaylib\cmake\;CMake Files\include\parlaylib\analysis\;CMake Files\include\libcuckoo\;CMake Files\include\libcuckoo\libcuckoo\;CMake Files\include\libcuckoo\libcuckoo-c\;CMake Files\include\libcuckoo\tests\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/Users/yagizsemercioglu/Desktop/tempus-framework/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/Users/yagizsemercioglu/Desktop/tempus-framework/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/Users/yagizsemercioglu/Desktop/tempus-framework/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/Users/yagizsemercioglu/Desktop/tempus-framework/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/Users/yagizsemercioglu/Desktop/tempus-framework/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="tempus">
+				<Option output="/Users/yagizsemercioglu/Desktop/tempus-framework/cmake-build-debug/tempus" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/yagizsemercioglu/Desktop/tempus-framework/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-DPARLAY_ELASTIC_PARALLELISM=true"/>
+					<Add directory="/Users/yagizsemercioglu/Desktop/tempus-framework/include"/>
+					<Add directory="/Users/yagizsemercioglu/Desktop/tempus-framework/include/libcuckoo/libcuckoo"/>
+					<Add directory="/Users/yagizsemercioglu/Desktop/tempus-framework/include/parlaylib"/>
+					<Add directory="/Users/yagizsemercioglu/Desktop/tempus-framework/include/libcuckoo"/>
+					<Add directory="/Users/yagizsemercioglu/Desktop/tempus-framework/include/parlaylib/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/lib/clang/15.0.0/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/Users/yagizsemercioglu/Desktop/tempus-framework/cmake-build-debug/Makefile&quot;  VERBOSE=1 tempus"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/Users/yagizsemercioglu/Desktop/tempus-framework/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/Users/yagizsemercioglu/Desktop/tempus-framework/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/Users/yagizsemercioglu/Desktop/tempus-framework/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="tempus/fast">
+				<Option output="/Users/yagizsemercioglu/Desktop/tempus-framework/cmake-build-debug/tempus" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/yagizsemercioglu/Desktop/tempus-framework/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-DPARLAY_ELASTIC_PARALLELISM=true"/>
+					<Add directory="/Users/yagizsemercioglu/Desktop/tempus-framework/include"/>
+					<Add directory="/Users/yagizsemercioglu/Desktop/tempus-framework/include/libcuckoo/libcuckoo"/>
+					<Add directory="/Users/yagizsemercioglu/Desktop/tempus-framework/include/parlaylib"/>
+					<Add directory="/Users/yagizsemercioglu/Desktop/tempus-framework/include/libcuckoo"/>
+					<Add directory="/Users/yagizsemercioglu/Desktop/tempus-framework/include/parlaylib/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/lib/clang/15.0.0/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/Users/yagizsemercioglu/Desktop/tempus-framework/cmake-build-debug/Makefile&quot;  VERBOSE=1 tempus/fast"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/Users/yagizsemercioglu/Desktop/tempus-framework/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/Users/yagizsemercioglu/Desktop/tempus-framework/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/Users/yagizsemercioglu/Desktop/tempus-framework/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="/Users/yagizsemercioglu/Desktop/tempus-framework/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/Users/yagizsemercioglu/Desktop/tempus-framework/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/Users/yagizsemercioglu/Desktop/tempus-framework/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/Users/yagizsemercioglu/Desktop/tempus-framework/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/Users/yagizsemercioglu/Desktop/tempus-framework/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="/Users/yagizsemercioglu/Desktop/tempus-framework/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/Users/yagizsemercioglu/Desktop/tempus-framework/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/Users/yagizsemercioglu/Desktop/tempus-framework/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/Users/yagizsemercioglu/Desktop/tempus-framework/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/Users/yagizsemercioglu/Desktop/tempus-framework/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="list_install_components">
+				<Option working_dir="/Users/yagizsemercioglu/Desktop/tempus-framework/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/Users/yagizsemercioglu/Desktop/tempus-framework/cmake-build-debug/Makefile&quot;  VERBOSE=1 list_install_components"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/Users/yagizsemercioglu/Desktop/tempus-framework/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/Users/yagizsemercioglu/Desktop/tempus-framework/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/Users/yagizsemercioglu/Desktop/tempus-framework/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="install">
+				<Option working_dir="/Users/yagizsemercioglu/Desktop/tempus-framework/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/Users/yagizsemercioglu/Desktop/tempus-framework/cmake-build-debug/Makefile&quot;  VERBOSE=1 install"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/Users/yagizsemercioglu/Desktop/tempus-framework/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/Users/yagizsemercioglu/Desktop/tempus-framework/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/Users/yagizsemercioglu/Desktop/tempus-framework/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="install/local">
+				<Option working_dir="/Users/yagizsemercioglu/Desktop/tempus-framework/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/Users/yagizsemercioglu/Desktop/tempus-framework/cmake-build-debug/Makefile&quot;  VERBOSE=1 install/local"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/Users/yagizsemercioglu/Desktop/tempus-framework/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/Users/yagizsemercioglu/Desktop/tempus-framework/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/Users/yagizsemercioglu/Desktop/tempus-framework/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="install/strip">
+				<Option working_dir="/Users/yagizsemercioglu/Desktop/tempus-framework/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/Users/yagizsemercioglu/Desktop/tempus-framework/cmake-build-debug/Makefile&quot;  VERBOSE=1 install/strip"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/Users/yagizsemercioglu/Desktop/tempus-framework/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/Users/yagizsemercioglu/Desktop/tempus-framework/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/Users/yagizsemercioglu/Desktop/tempus-framework/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/Users/yagizsemercioglu/Desktop/tempus-framework/include/LPA.cpp">
+			<Option target="tempus"/>
+		</Unit>
+		<Unit filename="/Users/yagizsemercioglu/Desktop/tempus-framework/include/LPA.h">
+			<Option target="tempus"/>
+		</Unit>
+		<Unit filename="/Users/yagizsemercioglu/Desktop/tempus-framework/include/adj_list.cpp">
+			<Option target="tempus"/>
+		</Unit>
+		<Unit filename="/Users/yagizsemercioglu/Desktop/tempus-framework/include/adj_list.h">
+			<Option target="tempus"/>
+		</Unit>
+		<Unit filename="/Users/yagizsemercioglu/Desktop/tempus-framework/include/oriented_graph.cpp">
+			<Option target="tempus"/>
+		</Unit>
+		<Unit filename="/Users/yagizsemercioglu/Desktop/tempus-framework/include/oriented_graph.h">
+			<Option target="tempus"/>
+		</Unit>
+		<Unit filename="/Users/yagizsemercioglu/Desktop/tempus-framework/include/seed_selection.cpp">
+			<Option target="tempus"/>
+		</Unit>
+		<Unit filename="/Users/yagizsemercioglu/Desktop/tempus-framework/include/seed_selection.h">
+			<Option target="tempus"/>
+		</Unit>
+		<Unit filename="/Users/yagizsemercioglu/Desktop/tempus-framework/main.cpp">
+			<Option target="tempus"/>
+		</Unit>
+		<Unit filename="/Users/yagizsemercioglu/Desktop/tempus-framework/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="/Users/yagizsemercioglu/Desktop/tempus-framework/include/parlaylib/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\include\parlaylib\"/>
+		</Unit>
+		<Unit filename="/Users/yagizsemercioglu/Desktop/tempus-framework/include/parlaylib/cmake/ParlayConfig.cmake.in">
+			<Option virtualFolder="CMake Files\include\parlaylib\cmake\"/>
+		</Unit>
+		<Unit filename="/Users/yagizsemercioglu/Desktop/tempus-framework/include/parlaylib/cmake/danalysis.cmake">
+			<Option virtualFolder="CMake Files\include\parlaylib\cmake\"/>
+		</Unit>
+		<Unit filename="/Users/yagizsemercioglu/Desktop/tempus-framework/include/parlaylib/analysis/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\include\parlaylib\analysis\"/>
+		</Unit>
+		<Unit filename="/Users/yagizsemercioglu/Desktop/tempus-framework/include/libcuckoo/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\include\libcuckoo\"/>
+		</Unit>
+		<Unit filename="/Users/yagizsemercioglu/Desktop/tempus-framework/include/libcuckoo/libcuckoo/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\include\libcuckoo\libcuckoo\"/>
+		</Unit>
+		<Unit filename="/Users/yagizsemercioglu/Desktop/tempus-framework/include/libcuckoo/libcuckoo-c/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\include\libcuckoo\libcuckoo-c\"/>
+		</Unit>
+		<Unit filename="/Users/yagizsemercioglu/Desktop/tempus-framework/include/libcuckoo/tests/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\include\libcuckoo\tests\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>

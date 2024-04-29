@@ -4,12 +4,16 @@
 #include <set>
 #include "libcuckoo/cuckoohash_map.hh"
 
+typedef libcuckoo::cuckoohash_map<uint64_t, std::vector<uint64_t>> Edge;
 typedef libcuckoo::cuckoohash_map<uint64_t, libcuckoo::cuckoohash_map<uint64_t, std::vector<uint64_t>>> NestedMap;
 
 class AdjList{
 public:
     void addFromFile(const std::string& path);
     void printGraph();
+    NestedMap& getEdges();
+    std::function<void(uint64_t, uint64_t, uint64_t, NestedMap&)> getInsertEdgeDirectedFunction();
+
 
 private:
     //time < source < list of destinations>>
@@ -37,6 +41,9 @@ private:
                           uint64_t destination, uint64_t time);
     void uniqueTimesHelper(std::unordered_map<uint64_t, uint64_t> &uniqueTimesMap, std::set<uint64_t> &uniqueTimes, bool insert);
     std::unordered_map<uint64_t, uint64_t> genUniqueTimeMap(uint64_t start, uint64_t end);
+
+
+
 };
 
 #endif //TEMPUS_ADJ_LIST_H
