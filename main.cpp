@@ -13,6 +13,7 @@ int main() {
 
     //std::string filePath = "../testinputAsonam";
     std::string filePath = "../testLPA2";
+    //std::string filePath = "../testOG";
     list.addFromFile(filePath);
 
     //std::string filePathLpa = "../testinputLPA";
@@ -78,8 +79,12 @@ int main() {
     std::map<uint64_t,uint64_t> lM = lpa.LabelPropagation(list.getEdges()); //LPA
 
 
-    for (size_t i = 1; i <= lM.size(); ++i) {
+    /*for (size_t i = 1; i <= lM.size(); ++i) {
         std::cout << "Vertex: " << i << ", Label: " << lM[i] << std::endl;
+    }*/
+
+    for (const auto& pair : lM){
+        std::cout << "Vertex: " << pair.first << ", Label: " << pair.second << std::endl;
     }
 
 
