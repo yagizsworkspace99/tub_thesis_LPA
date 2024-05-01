@@ -11,7 +11,8 @@ int main() {
     LPA lpa;
     oriented_graph orientedGraph;
 
-    std::string filePath = "../testinputAsonam";
+    //std::string filePath = "../testinputAsonam";
+    std::string filePath = "../testLPA2";
     list.addFromFile(filePath);
 
     //std::string filePathLpa = "../testinputLPA";
@@ -45,13 +46,13 @@ int main() {
 
 
     //std::vector<uint64_t> seeds = ss.coloring_ss(list.getEdges());
-    std::vector<uint64_t> seeds = ss.link_ss(list.getEdges());
-
+    //std::vector<uint64_t> seeds = ss.link_ss(list.getEdges());
+    /*
     std::cout<<"size of SEEDS is: "<<(seeds.size())<<std::endl;
     for(auto itemSeed: seeds){
         std::cout<<"The node has SEED: "<<(itemSeed)<<std::endl;
 
-    }
+    }*/
     /*
     Edge e = orientedGraph.OCG(list.getEdges());
     auto lt = e.lock_table();
@@ -73,7 +74,7 @@ int main() {
 
 
 
-    /*
+
     std::map<uint64_t,uint64_t> lM = lpa.LabelPropagation(list.getEdges()); //LPA
 
 
@@ -82,7 +83,7 @@ int main() {
     }
 
 
-*/
+
 
 
 
