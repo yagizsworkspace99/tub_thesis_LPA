@@ -34,5 +34,9 @@ add 12 13 0
 add 13 14 0
 add 13 15 0
 add 14 15 0
+add 3 12 1
+add 2 13 2
+add 12 6 3
+add 12 9 3
 
 

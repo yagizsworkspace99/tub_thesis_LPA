@@ -87,7 +87,7 @@ rebuild_cache/fast: rebuild_cache
 
 # Special rule for the target list_install_components
 list_install_components:
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Available install components are: \"Unspecified\""
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Available install components are: \"Unspecified\" \"gmock\" \"gtest\""
 .PHONY : list_install_components
 
 # Special rule for the target list_install_components
@@ -174,6 +174,71 @@ tempus/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/tempus.dir/build.make CMakeFiles/tempus.dir/build
 .PHONY : tempus/fast
 
+#=============================================================================
+# Target rules for targets named Google_Tests_run
+
+# Build rule for target.
+Google_Tests_run: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 Google_Tests_run
+.PHONY : Google_Tests_run
+
+# fast build rule for target.
+Google_Tests_run/fast:
+	$(MAKE) $(MAKESILENT) -f Google_tests/CMakeFiles/Google_Tests_run.dir/build.make Google_tests/CMakeFiles/Google_Tests_run.dir/build
+.PHONY : Google_Tests_run/fast
+
+#=============================================================================
+# Target rules for targets named gmock
+
+# Build rule for target.
+gmock: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 gmock
+.PHONY : gmock
+
+# fast build rule for target.
+gmock/fast:
+	$(MAKE) $(MAKESILENT) -f Google_tests/lib/googlemock/CMakeFiles/gmock.dir/build.make Google_tests/lib/googlemock/CMakeFiles/gmock.dir/build
+.PHONY : gmock/fast
+
+#=============================================================================
+# Target rules for targets named gmock_main
+
+# Build rule for target.
+gmock_main: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 gmock_main
+.PHONY : gmock_main
+
+# fast build rule for target.
+gmock_main/fast:
+	$(MAKE) $(MAKESILENT) -f Google_tests/lib/googlemock/CMakeFiles/gmock_main.dir/build.make Google_tests/lib/googlemock/CMakeFiles/gmock_main.dir/build
+.PHONY : gmock_main/fast
+
+#=============================================================================
+# Target rules for targets named gtest
+
+# Build rule for target.
+gtest: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 gtest
+.PHONY : gtest
+
+# fast build rule for target.
+gtest/fast:
+	$(MAKE) $(MAKESILENT) -f Google_tests/lib/googletest/CMakeFiles/gtest.dir/build.make Google_tests/lib/googletest/CMakeFiles/gtest.dir/build
+.PHONY : gtest/fast
+
+#=============================================================================
+# Target rules for targets named gtest_main
+
+# Build rule for target.
+gtest_main: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 gtest_main
+.PHONY : gtest_main
+
+# fast build rule for target.
+gtest_main/fast:
+	$(MAKE) $(MAKESILENT) -f Google_tests/lib/googletest/CMakeFiles/gtest_main.dir/build.make Google_tests/lib/googletest/CMakeFiles/gtest_main.dir/build
+.PHONY : gtest_main/fast
+
 include/LPA.o: include/LPA.cpp.o
 .PHONY : include/LPA.o
 
@@ -197,6 +262,54 @@ include/LPA.s: include/LPA.cpp.s
 include/LPA.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/tempus.dir/build.make CMakeFiles/tempus.dir/include/LPA.cpp.s
 .PHONY : include/LPA.cpp.s
+
+include/ModularityDensity.o: include/ModularityDensity.cpp.o
+.PHONY : include/ModularityDensity.o
+
+# target to build an object file
+include/ModularityDensity.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tempus.dir/build.make CMakeFiles/tempus.dir/include/ModularityDensity.cpp.o
+.PHONY : include/ModularityDensity.cpp.o
+
+include/ModularityDensity.i: include/ModularityDensity.cpp.i
+.PHONY : include/ModularityDensity.i
+
+# target to preprocess a source file
+include/ModularityDensity.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tempus.dir/build.make CMakeFiles/tempus.dir/include/ModularityDensity.cpp.i
+.PHONY : include/ModularityDensity.cpp.i
+
+include/ModularityDensity.s: include/ModularityDensity.cpp.s
+.PHONY : include/ModularityDensity.s
+
+# target to generate assembly for a file
+include/ModularityDensity.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tempus.dir/build.make CMakeFiles/tempus.dir/include/ModularityDensity.cpp.s
+.PHONY : include/ModularityDensity.cpp.s
+
+include/NMI.o: include/NMI.cpp.o
+.PHONY : include/NMI.o
+
+# target to build an object file
+include/NMI.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tempus.dir/build.make CMakeFiles/tempus.dir/include/NMI.cpp.o
+.PHONY : include/NMI.cpp.o
+
+include/NMI.i: include/NMI.cpp.i
+.PHONY : include/NMI.i
+
+# target to preprocess a source file
+include/NMI.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tempus.dir/build.make CMakeFiles/tempus.dir/include/NMI.cpp.i
+.PHONY : include/NMI.cpp.i
+
+include/NMI.s: include/NMI.cpp.s
+.PHONY : include/NMI.s
+
+# target to generate assembly for a file
+include/NMI.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/tempus.dir/build.make CMakeFiles/tempus.dir/include/NMI.cpp.s
+.PHONY : include/NMI.cpp.s
 
 include/adj_list.o: include/adj_list.cpp.o
 .PHONY : include/adj_list.o
@@ -306,10 +419,21 @@ help:
 	@echo "... install/strip"
 	@echo "... list_install_components"
 	@echo "... rebuild_cache"
+	@echo "... Google_Tests_run"
+	@echo "... gmock"
+	@echo "... gmock_main"
+	@echo "... gtest"
+	@echo "... gtest_main"
 	@echo "... tempus"
 	@echo "... include/LPA.o"
 	@echo "... include/LPA.i"
 	@echo "... include/LPA.s"
+	@echo "... include/ModularityDensity.o"
+	@echo "... include/ModularityDensity.i"
+	@echo "... include/ModularityDensity.s"
+	@echo "... include/NMI.o"
+	@echo "... include/NMI.i"
+	@echo "... include/NMI.s"
 	@echo "... include/adj_list.o"
 	@echo "... include/adj_list.i"
 	@echo "... include/adj_list.s"

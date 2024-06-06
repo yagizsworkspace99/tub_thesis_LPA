@@ -2,7 +2,12 @@
 <project version="4">
   <component name="CMakeRunConfigurationManager" shouldGenerate="true" shouldDeleteObsolete="true">
     <generated>
+      <config projectName="tempus" targetName="gmock" />
+      <config projectName="tempus" targetName="gmock_main" />
+      <config projectName="tempus" targetName="gtest" />
       <config projectName="tempus" targetName="tempus" />
+      <config projectName="tempus" targetName="Google_Tests_run" />
+      <config projectName="tempus" targetName="gtest_main" />
     </generated>
   </component>
   <component name="CMakeSettings" AUTO_RELOAD="true">
@@ -12,15 +17,60 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="43e3af95-756c-4bf9-80da-4f274a92bdc5" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/testOG" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Facebook" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Google_tests/CMakeLists.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Google_tests/test4.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/TestInputLarge" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/include/ModularityDensity.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/include/ModularityDensity.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/include/NMI.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/include/NMI.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/new_test" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/r2" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/r3" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/result" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/testAsonam2" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeCache.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeCache.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Makefile2" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Makefile2" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/TargetDirectories.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/TargetDirectories.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/clion-log.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/clion-log.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/progress.marks" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/progress.marks" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/tempus.dir/CXX.includecache" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/tempus.dir/CXX.includecache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/tempus.dir/build.make" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/tempus.dir/build.make" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/tempus.dir/depend.internal" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/tempus.dir/depend.internal" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/tempus.dir/depend.make" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/tempus.dir/depend.make" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/tempus.dir/flags.make" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/tempus.dir/flags.make" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/tempus.dir/include/LPA.cpp.o" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/tempus.dir/include/LPA.cpp.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/tempus.dir/include/adj_list.cpp.o" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/tempus.dir/include/adj_list.cpp.o" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/tempus.dir/include/oriented_graph.cpp.o" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/tempus.dir/include/oriented_graph.cpp.o" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/tempus.dir/include/seed_selection.cpp.o" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/tempus.dir/include/seed_selection.cpp.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/tempus.dir/link.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/tempus.dir/link.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/tempus.dir/main.cpp.o" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/tempus.dir/main.cpp.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/tempus.dir/progress.make" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/tempus.dir/progress.make" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/Makefile" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/Testing/Temporary/LastTest.log" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/Testing/Temporary/LastTest.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/include/libcuckoo/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/include/libcuckoo/Makefile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/include/libcuckoo/libcuckoo-c/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/include/libcuckoo/libcuckoo-c/Makefile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/include/libcuckoo/libcuckoo.cbp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/include/libcuckoo/libcuckoo.cbp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/include/libcuckoo/libcuckoo/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/include/libcuckoo/libcuckoo/Makefile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/include/libcuckoo/tests/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/include/libcuckoo/tests/Makefile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/include/parlaylib/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/include/parlaylib/Makefile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/include/parlaylib/PARLAY.cbp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/include/parlaylib/PARLAY.cbp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/include/parlaylib/analysis/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/include/parlaylib/analysis/Makefile" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/tempus" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/tempus" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/tempus.cbp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/tempus.cbp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/LPA.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/include/LPA.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/LPA.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/LPA.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/adj_list.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/include/adj_list.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/adj_list.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/adj_list.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/oriented_graph.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/include/oriented_graph.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/seed_selection.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/include/seed_selection.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/seed_selection.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/seed_selection.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/main.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/testOG" beforeDir="false" afterPath="$PROJECT_DIR$/testOG" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/testinputAsonam" beforeDir="false" afterPath="$PROJECT_DIR$/testinputAsonam" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -43,6 +93,16 @@
       <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
     </file-type-list>
   </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/Google_tests/lib/googletest_deps.bzl" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Google_tests/lib/CMakeLists.txt" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/include/adj_list.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Google_tests/lib/googletest/CMakeLists.txt" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/CMakeLists.txt" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Google_tests/lib/fake_fuchsia_sdk.bzl" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Google_tests/CMakeLists.txt" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/include/adj_list.cpp" root0="FORCE_HIGHLIGHTING" />
+  </component>
   <component name="ProjectId" id="2YqXgYAP6tTgl00F9w4fBb6uBh2" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
@@ -59,6 +119,7 @@
     <property name="cf.first.check.clang-format" value="false" />
     <property name="cidr.known.project.marker" value="true" />
     <property name="cmake.loaded.for.project" value="true" />
+    <property name="ctest.advertisement.all.test.configuration.is.created" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="settings.editor.selected.configurable" value="project.propVCSSupport.Mappings" />
@@ -68,9 +129,54 @@
       <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/include/gbbs/benchmarks/BFS/BFS_tutorial" />
     </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/include" />
+      <recent name="$PROJECT_DIR$/Google_tests" />
+      <recent name="$PROJECT_DIR$/GoogleTests" />
+    </key>
   </component>
   <component name="RunManager" selected="CMake Application.tempus">
-    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
+    <configuration name="Google_Tests_run" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="tempus" TARGET_NAME="Google_Tests_run" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="tempus" RUN_TARGET_NAME="Google_Tests_run" TEST_MODE="SUITE_TEST">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+        <option name="BeforeTestRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="HelloTest.BasicAssertions" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" temporary="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="tempus" TARGET_NAME="Google_Tests_run" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="tempus" RUN_TARGET_NAME="Google_Tests_run" TEST_CLASS="HelloTest" TEST_METHOD="BasicAssertions" TEST_MODE="SUITE_TEST">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+        <option name="BeforeTestRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="tempus.entrophy" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" temporary="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="tempus" TARGET_NAME="Google_Tests_run" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="tempus" RUN_TARGET_NAME="Google_Tests_run" TEST_CLASS="tempus" TEST_METHOD="entrophy" TEST_MODE="SUITE_TEST">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+        <option name="BeforeTestRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="tempus.sortEdges" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" temporary="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="tempus" TARGET_NAME="Google_Tests_run" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="tempus" RUN_TARGET_NAME="Google_Tests_run" TEST_CLASS="tempus" TEST_METHOD="sortEdges" TEST_MODE="SUITE_TEST">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+        <option name="BeforeTestRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="gmock" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="tempus" TARGET_NAME="gmock" CONFIG_NAME="Debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="gmock_main" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="tempus" TARGET_NAME="gmock_main" CONFIG_NAME="Debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="gtest" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="tempus" TARGET_NAME="gtest" CONFIG_NAME="Debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="gtest_main" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="tempus" TARGET_NAME="gtest_main" CONFIG_NAME="Debug">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
@@ -80,21 +186,36 @@
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
+    <configuration name="All CTest" type="CTestRunConfiguration" factoryName="CTestRun" PROGRAM_PARAMS="--extra-verbose" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" WORKING_DIR="file://$CMakeCurrentLocalGenerationDir$" PASS_PARENT_ENVS_2="true" CONFIG_NAME="Debug" RUN_PATH="$CTestCurrentExecutableName$" EXPLICIT_BUILD_TARGET_NAME="all" TEST_MODE="SUITE_TEST">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+        <option name="BeforeTestRunTask" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="default_target" type="MAKEFILE_TARGET_RUN_CONFIGURATION" factoryName="Makefile" temporary="true">
       <makefile filename="$PROJECT_DIR$/cmake-build-debug/Makefile" target="default_target" workingDirectory="" arguments="">
         <envs />
       </makefile>
       <method v="2" />
     </configuration>
-    <configuration default="true" type="PleaseRunConfigurationType" factoryName="PleaseRunConfigurationType.Factory" target="//some:target" pleaseArgs="" pleaseRoot="" programArgs="" workingDir="">
-      <method v="2" />
-    </configuration>
     <list>
+      <item itemvalue="CMake Application.gmock" />
+      <item itemvalue="CMake Application.gmock_main" />
+      <item itemvalue="CMake Application.gtest" />
+      <item itemvalue="CMake Application.gtest_main" />
       <item itemvalue="CMake Application.tempus" />
+      <item itemvalue="CTest Application.All CTest" />
+      <item itemvalue="Google Test.Google_Tests_run" />
+      <item itemvalue="Google Test.HelloTest.BasicAssertions" />
+      <item itemvalue="Google Test.tempus.sortEdges" />
+      <item itemvalue="Google Test.tempus.entrophy" />
       <item itemvalue="Makefile Target.default_target" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Google Test.tempus.entrophy" />
+        <item itemvalue="Google Test.HelloTest.BasicAssertions" />
+        <item itemvalue="Google Test.tempus.sortEdges" />
         <item itemvalue="Makefile Target.default_target" />
       </list>
     </recent_temporary>
@@ -115,7 +236,14 @@
       <workItem from="1703624519793" duration="12385000" />
       <workItem from="1704474253752" duration="170153000" />
       <workItem from="1713606075064" duration="1203000" />
-      <workItem from="1713790802407" duration="58606000" />
+      <workItem from="1713790802407" duration="59749000" />
+      <workItem from="1714744583065" duration="6181000" />
+      <workItem from="1714766951645" duration="77676000" />
+      <workItem from="1715600086657" duration="44606000" />
+      <workItem from="1716301255858" duration="29059000" />
+      <workItem from="1717276573159" duration="5979000" />
+      <workItem from="1717608169756" duration="19309000" />
+      <workItem from="1717687101533" duration="1000" />
     </task>
     <servers />
   </component>
@@ -143,6 +271,8 @@
   <component name="VcsManagerConfiguration">
     <ignored-roots>
       <path value="$PROJECT_DIR$/include/gbbs" />
+      <path value="$PROJECT_DIR$/Google_tests/googletest" />
+      <path value="$PROJECT_DIR$/googletest" />
     </ignored-roots>
   </component>
 </project>

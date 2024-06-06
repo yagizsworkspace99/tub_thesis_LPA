@@ -16,12 +16,13 @@
 #include "oriented_graph.h"
 #include <queue>
 
-LPA lpa;
 
-AdjList myList;
-auto insertFunc = myList.getInsertEdgeDirectedFunction();
 
-Edge Gstar; //instead of this should I use Nestedmap???
+AdjList myList1;
+auto insertFunc1 = myList1.getInsertEdgeDirectedFunction();
+
+Edge Gstar1; //instead of this should I use Nestedmap???
+
 
 
 /**
@@ -31,9 +32,9 @@ Edge Gstar; //instead of this should I use Nestedmap???
 void oriented_graph::Updates(std::vector<std::tuple<uint64_t, uint64_t,uint64_t, int>> InsDel){
     for (const auto [source,destination,time,type] : InsDel) {
         if(type == 0){
-            DC_Orient_Del(Gstar,source ,destination);
+            DC_Orient_Del(Gstar1,source ,destination);
         }else if (type == 1){
-            DC_Orient_Ins(Gstar,source ,destination);
+            DC_Orient_Ins(Gstar1,source ,destination);
         }
     }
 }
@@ -47,7 +48,7 @@ void oriented_graph::Updates(std::vector<std::tuple<uint64_t, uint64_t,uint64_t,
  */
 std::vector<uint64_t> oriented_graph::nbrMinus(uint64_t u,Edge &edge){
     std::vector<uint64_t> nbrMinusNodes;
-    for(int source = 0; source<=Gstar.size(); source++){
+    for(int source = 0; source<=Gstar1.size(); source++){
         bool flag = false;
         edge.find_fn(source,
                   [&flag, &u](std::vector<uint64_t> &d) {
@@ -91,25 +92,31 @@ void oriented_graph::deleteEdgeDirected_OCG(uint64_t source, uint64_t destinatio
  * @return oriented graph
  */
 Edge oriented_graph::OCG(NestedMap &G) {
+    //auto lt = G.find(0).lock_table();
+
     auto lt = G.lock_table();
-    for (const auto &time_entry: lt) {
-        Edge edgeData = time_entry.second;
-        auto lt2 = edgeData.lock_table();
-        for (const auto &verticies: lt2) {
-            uint64_t v = verticies.first; // vertex v
-            for(const auto &n : verticies.second){ //neighbors
-                for (const auto &verticiesAgain: lt2){
-                    if(verticiesAgain.first == n){ // neighbor in first column
-                        if(verticies.second.size() > verticiesAgain.second.size() or (verticies.second.size() == verticiesAgain.second.size() and verticies.first < verticiesAgain.first)){
-                            insertEdgeDirected_OCG(verticies.first,verticiesAgain.first,Gstar);
-                        }
+    Edge edgeData = lt.find(0)->second;
+    auto lt2 = edgeData.lock_table();
+    for (const auto &verticies: lt2) {
+        uint64_t v = verticies.first; // vertex v
+        for(const auto &n : verticies.second){ //neighbors
+            for (const auto &verticiesAgain: lt2){
+                if(verticiesAgain.first == n){ // neighbor in first column
+                    if(verticies.second.size() > verticiesAgain.second.size() or (verticies.second.size() == verticiesAgain.second.size() and verticies.first < verticiesAgain.first)){
+                            insertEdgeDirected_OCG(verticies.first,verticiesAgain.first,Gstar1);
                     }
                 }
-
             }
+
         }
     }
-    return Gstar;
+
+    for(int i = 0; i<12; i++){
+
+        //std::cout<<labels[i]<<"dışardan"<<std::endl;
+    }
+
+    return Gstar1;
 }
 
 
@@ -171,7 +178,7 @@ void oriented_graph::CAN(Edge &Gs, std::queue<uint64_t> q){
         uint64_t u = q.front();
         q.pop();
         std::vector<uint64_t> C = CollectColor(u);
-        bool b = AssignColor(myList.getEdges(),u,C);
+        bool b = AssignColor(myList1.getEdges(),u,C);
         NotifyColor(u,b,q);
     }
 
@@ -185,8 +192,9 @@ void oriented_graph::CAN(Edge &Gs, std::queue<uint64_t> q){
  */
 std::vector<uint64_t> oriented_graph::CollectColor(uint64_t u){
     std::vector<uint64_t> C;
-    for(uint64_t v : nbrMinus(u,Gstar)){
-        C.push_back(lpa.vertexLabel[v]);
+    for(uint64_t v : nbrMinus(u,Gstar1)){
+        //C.push_back(labels[v]);
+
     }
     return C;
 }
@@ -222,8 +230,8 @@ bool oriented_graph::AssignColor(NestedMap &G, uint64_t u, std::vector<uint64_t>
                 break;
             }
         }
-        if(Cnew != lpa.vertexLabel[u]){
-            lpa.vertexLabel[u] = Cnew;
+        if(Cnew != 0){
+            //labels[u] = Cnew;
             return true;
         }else{
             return false;
@@ -240,7 +248,7 @@ bool oriented_graph::AssignColor(NestedMap &G, uint64_t u, std::vector<uint64_t>
  */
 void oriented_graph::NotifyColor(uint64_t u, bool b, std::queue<uint64_t> q){
     if(b){
-        auto lt = Gstar.lock_table();
+        auto lt = Gstar1.lock_table();
         for (const auto &source: lt){
             if(source.first==u){
                 for (const auto &v: source.second){ //nbr+
@@ -265,9 +273,9 @@ std::vector<uint64_t> oriented_graph::OCG_Ins(Edge &Gs, uint64_t u, uint64_t v){
     std::vector<uint64_t> S;
     S.push_back(u);
     S.push_back(v);
-    insertEdgeDirected_OCG(u,v,Gstar);
+    insertEdgeDirected_OCG(u,v,Gstar1);
     for (auto &uı: nbrMinus(u,Gs)){
-        auto lt = Gstar.lock_table();
+        auto lt = Gstar1.lock_table();
         for (const auto &source1: lt){
             if(source1.first==u){
                 for (const auto &source2: lt){
@@ -287,7 +295,7 @@ std::vector<uint64_t> oriented_graph::OCG_Ins(Edge &Gs, uint64_t u, uint64_t v){
     }
 
     for (auto &vı: nbrMinus(v,Gs)){
-        auto lt = Gstar.lock_table();
+        auto lt = Gstar1.lock_table();
         for (const auto &source3: lt){
             if(source3.first==v){
                 for (const auto &source4: lt){
@@ -322,9 +330,9 @@ std::vector<uint64_t> oriented_graph::OCG_Del(Edge &Gs, uint64_t u, uint64_t v){
     std::vector<uint64_t> S;
     S.push_back(u);
     S.push_back(v);
-    deleteEdgeDirected_OCG(u,v,Gstar);
+    deleteEdgeDirected_OCG(u,v,Gstar1);
 
-    auto lt = Gstar.lock_table();
+    auto lt = Gstar1.lock_table();
     for (const auto &s: lt){
         if(s.first==u){
             for (auto &uı: s.second){

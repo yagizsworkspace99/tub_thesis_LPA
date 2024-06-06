@@ -42,5 +42,5 @@ CMake Deprecation Warning at include/libcuckoo/CMakeLists.txt:1 (cmake_minimum_r
 -- examples: Disabled (enable with -DPARLAY_EXAMPLES=On)
 -- example data: Off (add -DPARLAY_EXAMPLE_DATA=On to download)
 -- Configuring done (0.1s)
--- Generating done (0.0s)
+-- Generating done (0.1s)
 -- Build files have been written to: /Users/yagizsemercioglu/Desktop/tempus-framework/cmake-build-debug

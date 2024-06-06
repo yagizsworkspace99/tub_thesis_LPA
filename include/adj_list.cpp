@@ -7,12 +7,14 @@
 #include <map>
 #include <functional>
 #include "oriented_graph.h"
+#include "LPA.h"
 
 
 
 typedef libcuckoo::cuckoohash_map<uint64_t, std::vector<uint64_t>> Edge;
 typedef libcuckoo::cuckoohash_map<uint64_t, libcuckoo::cuckoohash_map<uint64_t, std::vector<uint64_t>>> NestedMap;
-oriented_graph og;
+
+
 
 /**
  * Checks if the given edge exists in the graph.
@@ -91,9 +93,7 @@ void AdjList::insertEdgeUndirected(uint64_t source, uint64_t destination, uint64
     insertEdgeDirected(source, destination, time, edges);
     //insert edges from destination
     insertEdgeDirected(destination, source, time, edges);
-    if(time > 0){
-        og.InsDel.push_back(std::make_tuple(source, destination, time, 1));
-    }
+
 
 
 }
@@ -150,7 +150,7 @@ void AdjList::deleteEdgeUndirected(uint64_t source, uint64_t destination, uint64
     deleteEdgeDirected(destination, source, time);
 
     if(time > 0){
-        og.InsDel.push_back(std::make_tuple(source, destination, time,0));
+        InsDel.push_back(std::make_tuple(source, destination, time,0));
     }
 
 
@@ -435,11 +435,23 @@ NestedMap& AdjList::getEdges(){
 
 }
 
+std::vector<std::tuple<uint64_t, uint64_t,uint64_t, int>> AdjList::getUpdates(){
+    return this->InsDel;
+    for (const auto [source,destination,time,type] : InsDel) {
+
+
+        std::cout<<"bunlar: "<<source << destination << time << type <<std::endl;
+
+    }
+}
+
 std::function<void(uint64_t, uint64_t, uint64_t, NestedMap&)> AdjList::getInsertEdgeDirectedFunction() {
     return [this](uint64_t source, uint64_t destination, uint64_t time, NestedMap& map) {
         this->insertEdgeDirected(source, destination, time, map);
     };
 }
+
+
 
 
 

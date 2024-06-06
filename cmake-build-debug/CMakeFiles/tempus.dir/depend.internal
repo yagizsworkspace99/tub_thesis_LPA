@@ -10,7 +10,21 @@ CMakeFiles/tempus.dir/include/LPA.cpp.o
  /Users/yagizsemercioglu/Desktop/tempus-framework/include/libcuckoo/libcuckoo/cuckoohash_map.hh
  /Users/yagizsemercioglu/Desktop/tempus-framework/include/libcuckoo/libcuckoo/cuckoohash_util.hh
  /Users/yagizsemercioglu/Desktop/tempus-framework/include/seed_selection.h
+CMakeFiles/tempus.dir/include/ModularityDensity.cpp.o
+ /Users/yagizsemercioglu/Desktop/tempus-framework/include/LPA.h
+ /Users/yagizsemercioglu/Desktop/tempus-framework/include/ModularityDensity.cpp
+ /Users/yagizsemercioglu/Desktop/tempus-framework/include/ModularityDensity.h
+ /Users/yagizsemercioglu/Desktop/tempus-framework/include/adj_list.h
+ /Users/yagizsemercioglu/Desktop/tempus-framework/include/libcuckoo/libcuckoo/bucket_container.hh
+ /Users/yagizsemercioglu/Desktop/tempus-framework/include/libcuckoo/libcuckoo/cuckoohash_config.hh
+ /Users/yagizsemercioglu/Desktop/tempus-framework/include/libcuckoo/libcuckoo/cuckoohash_map.hh
+ /Users/yagizsemercioglu/Desktop/tempus-framework/include/libcuckoo/libcuckoo/cuckoohash_util.hh
+ /Users/yagizsemercioglu/Desktop/tempus-framework/include/seed_selection.h
+CMakeFiles/tempus.dir/include/NMI.cpp.o
+ /Users/yagizsemercioglu/Desktop/tempus-framework/include/NMI.cpp
+ /Users/yagizsemercioglu/Desktop/tempus-framework/include/NMI.h
 CMakeFiles/tempus.dir/include/adj_list.cpp.o
+ /Users/yagizsemercioglu/Desktop/tempus-framework/include/LPA.h
  /Users/yagizsemercioglu/Desktop/tempus-framework/include/adj_list.cpp
  /Users/yagizsemercioglu/Desktop/tempus-framework/include/adj_list.h
  /Users/yagizsemercioglu/Desktop/tempus-framework/include/libcuckoo/libcuckoo/bucket_container.hh
@@ -45,21 +59,11 @@ CMakeFiles/tempus.dir/include/seed_selection.cpp.o
  /Users/yagizsemercioglu/Desktop/tempus-framework/include/libcuckoo/libcuckoo/cuckoohash_config.hh
  /Users/yagizsemercioglu/Desktop/tempus-framework/include/libcuckoo/libcuckoo/cuckoohash_map.hh
  /Users/yagizsemercioglu/Desktop/tempus-framework/include/libcuckoo/libcuckoo/cuckoohash_util.hh
- /Users/yagizsemercioglu/Desktop/tempus-framework/include/parlaylib/include/parlay/internal/atomic_wait.h
- /Users/yagizsemercioglu/Desktop/tempus-framework/include/parlaylib/include/parlay/internal/scheduler_plugins/cilkplus.h
- /Users/yagizsemercioglu/Desktop/tempus-framework/include/parlaylib/include/parlay/internal/scheduler_plugins/omp.h
- /Users/yagizsemercioglu/Desktop/tempus-framework/include/parlaylib/include/parlay/internal/scheduler_plugins/opencilk.h
- /Users/yagizsemercioglu/Desktop/tempus-framework/include/parlaylib/include/parlay/internal/scheduler_plugins/sequential.h
- /Users/yagizsemercioglu/Desktop/tempus-framework/include/parlaylib/include/parlay/internal/scheduler_plugins/tbb.h
- /Users/yagizsemercioglu/Desktop/tempus-framework/include/parlaylib/include/parlay/internal/work_stealing_deque.h
- /Users/yagizsemercioglu/Desktop/tempus-framework/include/parlaylib/include/parlay/internal/work_stealing_job.h
- /Users/yagizsemercioglu/Desktop/tempus-framework/include/parlaylib/include/parlay/parallel.h
- /Users/yagizsemercioglu/Desktop/tempus-framework/include/parlaylib/include/parlay/scheduler.h
- /Users/yagizsemercioglu/Desktop/tempus-framework/include/parlaylib/include/parlay/type_traits.h
  /Users/yagizsemercioglu/Desktop/tempus-framework/include/seed_selection.cpp
  /Users/yagizsemercioglu/Desktop/tempus-framework/include/seed_selection.h
 CMakeFiles/tempus.dir/main.cpp.o
  /Users/yagizsemercioglu/Desktop/tempus-framework/include/LPA.h
+ /Users/yagizsemercioglu/Desktop/tempus-framework/include/NMI.h
  /Users/yagizsemercioglu/Desktop/tempus-framework/include/adj_list.h
  /Users/yagizsemercioglu/Desktop/tempus-framework/include/libcuckoo/libcuckoo/bucket_container.hh
  /Users/yagizsemercioglu/Desktop/tempus-framework/include/libcuckoo/libcuckoo/cuckoohash_config.hh

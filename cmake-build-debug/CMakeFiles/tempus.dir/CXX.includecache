@@ -15,8 +15,18 @@ algorithm
 -
 random
 -
+vector
+-
+tuple
+-
+queue
+-
 libcuckoo/cuckoohash_map.hh
 /Users/yagizsemercioglu/Desktop/tempus-framework/include/libcuckoo/cuckoohash_map.hh
+
+/Users/yagizsemercioglu/Desktop/tempus-framework/include/NMI.h
+map
+-
 
 /Users/yagizsemercioglu/Desktop/tempus-framework/include/adj_list.h
 set
@@ -129,6 +139,8 @@ set
 -
 libcuckoo/cuckoohash_map.hh
 /Users/yagizsemercioglu/Desktop/tempus-framework/include/libcuckoo/cuckoohash_map.hh
+string
+-
 
 /Users/yagizsemercioglu/Desktop/tempus-framework/main.cpp
 adj_list.h
@@ -141,4 +153,6 @@ map
 -
 oriented_graph.h
 -
+NMI.h
+/Users/yagizsemercioglu/Desktop/tempus-framework/NMI.h
 

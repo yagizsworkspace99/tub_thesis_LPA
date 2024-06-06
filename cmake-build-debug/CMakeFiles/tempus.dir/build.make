@@ -131,13 +131,41 @@ CMakeFiles/tempus.dir/include/oriented_graph.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/tempus.dir/include/oriented_graph.cpp.s"
 	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/yagizsemercioglu/Desktop/tempus-framework/include/oriented_graph.cpp -o CMakeFiles/tempus.dir/include/oriented_graph.cpp.s
 
+CMakeFiles/tempus.dir/include/NMI.cpp.o: CMakeFiles/tempus.dir/flags.make
+CMakeFiles/tempus.dir/include/NMI.cpp.o: /Users/yagizsemercioglu/Desktop/tempus-framework/include/NMI.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/yagizsemercioglu/Desktop/tempus-framework/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/tempus.dir/include/NMI.cpp.o"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/tempus.dir/include/NMI.cpp.o -c /Users/yagizsemercioglu/Desktop/tempus-framework/include/NMI.cpp
+
+CMakeFiles/tempus.dir/include/NMI.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/tempus.dir/include/NMI.cpp.i"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/yagizsemercioglu/Desktop/tempus-framework/include/NMI.cpp > CMakeFiles/tempus.dir/include/NMI.cpp.i
+
+CMakeFiles/tempus.dir/include/NMI.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/tempus.dir/include/NMI.cpp.s"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/yagizsemercioglu/Desktop/tempus-framework/include/NMI.cpp -o CMakeFiles/tempus.dir/include/NMI.cpp.s
+
+CMakeFiles/tempus.dir/include/ModularityDensity.cpp.o: CMakeFiles/tempus.dir/flags.make
+CMakeFiles/tempus.dir/include/ModularityDensity.cpp.o: /Users/yagizsemercioglu/Desktop/tempus-framework/include/ModularityDensity.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/yagizsemercioglu/Desktop/tempus-framework/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/tempus.dir/include/ModularityDensity.cpp.o"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/tempus.dir/include/ModularityDensity.cpp.o -c /Users/yagizsemercioglu/Desktop/tempus-framework/include/ModularityDensity.cpp
+
+CMakeFiles/tempus.dir/include/ModularityDensity.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/tempus.dir/include/ModularityDensity.cpp.i"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/yagizsemercioglu/Desktop/tempus-framework/include/ModularityDensity.cpp > CMakeFiles/tempus.dir/include/ModularityDensity.cpp.i
+
+CMakeFiles/tempus.dir/include/ModularityDensity.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/tempus.dir/include/ModularityDensity.cpp.s"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/yagizsemercioglu/Desktop/tempus-framework/include/ModularityDensity.cpp -o CMakeFiles/tempus.dir/include/ModularityDensity.cpp.s
+
 # Object files for target tempus
 tempus_OBJECTS = \
 "CMakeFiles/tempus.dir/main.cpp.o" \
 "CMakeFiles/tempus.dir/include/adj_list.cpp.o" \
 "CMakeFiles/tempus.dir/include/seed_selection.cpp.o" \
 "CMakeFiles/tempus.dir/include/LPA.cpp.o" \
-"CMakeFiles/tempus.dir/include/oriented_graph.cpp.o"
+"CMakeFiles/tempus.dir/include/oriented_graph.cpp.o" \
+"CMakeFiles/tempus.dir/include/NMI.cpp.o" \
+"CMakeFiles/tempus.dir/include/ModularityDensity.cpp.o"
 
 # External object files for target tempus
 tempus_EXTERNAL_OBJECTS =
@@ -147,9 +175,11 @@ tempus: CMakeFiles/tempus.dir/include/adj_list.cpp.o
 tempus: CMakeFiles/tempus.dir/include/seed_selection.cpp.o
 tempus: CMakeFiles/tempus.dir/include/LPA.cpp.o
 tempus: CMakeFiles/tempus.dir/include/oriented_graph.cpp.o
+tempus: CMakeFiles/tempus.dir/include/NMI.cpp.o
+tempus: CMakeFiles/tempus.dir/include/ModularityDensity.cpp.o
 tempus: CMakeFiles/tempus.dir/build.make
 tempus: CMakeFiles/tempus.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/yagizsemercioglu/Desktop/tempus-framework/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Linking CXX executable tempus"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/yagizsemercioglu/Desktop/tempus-framework/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Linking CXX executable tempus"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/tempus.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

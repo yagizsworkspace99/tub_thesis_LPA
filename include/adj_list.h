@@ -7,18 +7,21 @@
 typedef libcuckoo::cuckoohash_map<uint64_t, std::vector<uint64_t>> Edge;
 typedef libcuckoo::cuckoohash_map<uint64_t, libcuckoo::cuckoohash_map<uint64_t, std::vector<uint64_t>>> NestedMap;
 
+
 class AdjList{
 public:
     void addFromFile(const std::string& path);
     void printGraph();
     NestedMap& getEdges();
     std::function<void(uint64_t, uint64_t, uint64_t, NestedMap&)> getInsertEdgeDirectedFunction();
+    std::vector<std::tuple<uint64_t, uint64_t,uint64_t, int>> getUpdates();
 
 
 private:
     //time < source < list of destinations>>
     NestedMap edges;
     std::set<uint64_t> uniqueTimestamps;
+    std::vector<std::tuple<uint64_t, uint64_t,uint64_t, int>> InsDel;
 
     //TODO: std::unorderedmap<uint64_t, libcuckoo::cuckoohash_map<uint64_t, std::vector<uint64_t>>>
     //TODO: std::map<uint64_t, libcuckoo::cuckoohash_map<uint64_t, std::vector<uint64_t>>>
